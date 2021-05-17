@@ -1,4 +1,6 @@
 /.bundle/
+/gemspecs/.bundle/
+/gemspecs/*.lock
 /.yardoc
 /_yardoc/
 /coverage/
