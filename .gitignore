@@ -1,6 +1,6 @@
 /.bundle/
-/gemspecs/.bundle/
-/gemspecs/*.lock
+/gemfiles/.bundle/
+/gemfiles/*.lock
 /.yardoc
 /_yardoc/
 /coverage/
