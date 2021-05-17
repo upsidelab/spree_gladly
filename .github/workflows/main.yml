@@ -4,15 +4,59 @@ on: [push,pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - ubuntu
+        ruby:
+          - 3.0
+          - 2.7
+          - 2.5
+          - 2.3
+        gemfile:
+          - gemfiles/spree_3_1.gemfile
+          - gemfiles/spree_3_7.gemfile
+          - gemfiles/spree_4_0.gemfile
+          - gemfiles/spree_4_1.gemfile
+          - gemfiles/spree_4_2.gemfile
+          - gemfiles/spree_master.gemfile
+        exclude:
+          - ruby: 3.0
+            gemfile: gemfiles/spree_3_1.gemfile
+          - ruby: 3.0
+            gemfile: gemfiles/spree_3_7.gemfile
+          - ruby: 3.0
+            gemfile: gemfiles/spree_4_0.gemfile
+          - ruby: 3.0
+            gemfile: gemfiles/spree_4_1.gemfile
+          - ruby: 2.7
+            gemfile: gemfiles/spree_3_1.gemfile
+          - ruby: 2.5
+            gemfile: gemfiles/spree_3_1.gemfile
+          - ruby: 2.5
+            gemfile: gemfiles/spree_master.gemfile
+          - ruby: 2.3
+            gemfile: gemfiles/spree_3_7.gemfile
+          - ruby: 2.3
+            gemfile: gemfiles/spree_4_0.gemfile
+          - ruby: 2.3
+            gemfile: gemfiles/spree_4_1.gemfile
+          - ruby: 2.3
+            gemfile: gemfiles/spree_4_2.gemfile
+          - ruby: 2.3
+            gemfile: gemfiles/spree_master.gemfile
+    env:
+      BUNDLE_GEMFILE: "${{ matrix.gemfile }}"
+    runs-on: ${{ matrix.os }}-latest
+    continue-on-error: ${{ matrix.gemfile == 'gemfiles/spree_master.gemfile' }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.0.0
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
     - name: Run the default task
       run: |
-        gem install bundler -v 2.2.3
-        bundle install
         bundle exec rake
