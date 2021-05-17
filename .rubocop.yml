@@ -7,6 +7,8 @@ AllCops:
     - 'node_modules/**/*'
     - 'Gemfile'
     - 'spree_gladly.gemspec'
+    - 'Appraisals'
+    - 'gemfiles/**/*'
     - 'Guardfile'
     - 'lib/tasks/heroku_clear_tasks.rake'
     - 'spec/rails_helper.rb'
