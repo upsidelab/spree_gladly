@@ -24,8 +24,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'spree_core'
-  spec.add_dependency 'spree_api'
   spec.add_dependency 'spree_extension'
+  spec.add_dependency 'dry-validation'
+  spec.add_dependency 'jsonapi-serializer'
 
   spec.add_development_dependency 'dotenv-rails'
   spec.add_development_dependency 'spree_dev_tools'
