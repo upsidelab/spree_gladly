@@ -1,9 +1,9 @@
 FACTORY_BOT_CLASS = defined?(FactoryGirl) ? FactoryGirl : FactoryBot
 
 FACTORY_BOT_CLASS.define do
-  GEM_ROOT = File.dirname(File.dirname(File.dirname(__FILE__)))
+  gem_root = File.dirname(File.dirname(File.dirname(__FILE__)))
 
-  Dir[File.join(GEM_ROOT, 'spec', 'factories', '**', '*.rb')].each do |factory|
+  Dir[File.join(gem_root, 'spec', 'factories', '**', '*.rb')].sort.each do |factory|
     require(factory)
   end
 end

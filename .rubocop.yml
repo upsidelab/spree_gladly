@@ -15,6 +15,7 @@ AllCops:
     - 'spec/spec_helper.rb'
     - 'vendor/**/*'
     - 'tmp/**/*'
+    - 'spec/dummy/**/*'
   SuggestExtensions: false
   NewCops: enable
 
@@ -26,6 +27,10 @@ Style/FrozenStringLiteralComment:
 
 Style/SpecialGlobalVars:
   Enabled: false
+
+Layout/LineLength:
+  Enabled: true
+  Max: 120
 
 Lint/RedundantCopEnableDirective:
   Enabled: false
