@@ -20,7 +20,7 @@ jobs:
           - 2.3
         gemfile:
           - gemfiles/spree_3_1.gemfile
-#          - gemfiles/spree_3_7.gemfile
+          - gemfiles/spree_3_7.gemfile
 #          - gemfiles/spree_4_0.gemfile
 #          - gemfiles/spree_4_1.gemfile
 #          - gemfiles/spree_4_2.gemfile
@@ -28,8 +28,8 @@ jobs:
         exclude:
           - ruby: 3.0
             gemfile: gemfiles/spree_3_1.gemfile
-#          - ruby: 3.0
-#            gemfile: gemfiles/spree_3_7.gemfile
+          - ruby: 3.0
+            gemfile: gemfiles/spree_3_7.gemfile
 #          - ruby: 3.0
 #            gemfile: gemfiles/spree_4_0.gemfile
 #          - ruby: 3.0
@@ -40,8 +40,8 @@ jobs:
             gemfile: gemfiles/spree_3_1.gemfile
           - ruby: 2.5
             gemfile: gemfiles/spree_master.gemfile
-#          - ruby: 2.3
-#            gemfile: gemfiles/spree_3_7.gemfile
+          - ruby: 2.3
+            gemfile: gemfiles/spree_3_7.gemfile
 #          - ruby: 2.3
 #            gemfile: gemfiles/spree_4_0.gemfile
 #          - ruby: 2.3
