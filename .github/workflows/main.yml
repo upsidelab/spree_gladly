@@ -20,39 +20,40 @@ jobs:
           - 2.3
         gemfile:
           - gemfiles/spree_3_1.gemfile
-          - gemfiles/spree_3_7.gemfile
-          - gemfiles/spree_4_0.gemfile
-          - gemfiles/spree_4_1.gemfile
-          - gemfiles/spree_4_2.gemfile
+#          - gemfiles/spree_3_7.gemfile
+#          - gemfiles/spree_4_0.gemfile
+#          - gemfiles/spree_4_1.gemfile
+#          - gemfiles/spree_4_2.gemfile
           - gemfiles/spree_master.gemfile
         exclude:
           - ruby: 3.0
             gemfile: gemfiles/spree_3_1.gemfile
-          - ruby: 3.0
-            gemfile: gemfiles/spree_3_7.gemfile
-          - ruby: 3.0
-            gemfile: gemfiles/spree_4_0.gemfile
-          - ruby: 3.0
-            gemfile: gemfiles/spree_4_1.gemfile
+#          - ruby: 3.0
+#            gemfile: gemfiles/spree_3_7.gemfile
+#          - ruby: 3.0
+#            gemfile: gemfiles/spree_4_0.gemfile
+#          - ruby: 3.0
+#            gemfile: gemfiles/spree_4_1.gemfile
           - ruby: 2.7
             gemfile: gemfiles/spree_3_1.gemfile
           - ruby: 2.5
             gemfile: gemfiles/spree_3_1.gemfile
           - ruby: 2.5
             gemfile: gemfiles/spree_master.gemfile
-          - ruby: 2.3
-            gemfile: gemfiles/spree_3_7.gemfile
-          - ruby: 2.3
-            gemfile: gemfiles/spree_4_0.gemfile
-          - ruby: 2.3
-            gemfile: gemfiles/spree_4_1.gemfile
-          - ruby: 2.3
-            gemfile: gemfiles/spree_4_2.gemfile
+#          - ruby: 2.3
+#            gemfile: gemfiles/spree_3_7.gemfile
+#          - ruby: 2.3
+#            gemfile: gemfiles/spree_4_0.gemfile
+#          - ruby: 2.3
+#            gemfile: gemfiles/spree_4_1.gemfile
+#          - ruby: 2.3
+#            gemfile: gemfiles/spree_4_2.gemfile
           - ruby: 2.3
             gemfile: gemfiles/spree_master.gemfile
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
     runs-on: ${{ matrix.os }}-latest
+    # add Postgres to avoid sqlite
     continue-on-error: ${{ matrix.gemfile == 'gemfiles/spree_master.gemfile' }}
     steps:
     - uses: actions/checkout@v2
@@ -64,4 +65,8 @@ jobs:
         bundler-cache: true
     - name: Run the default task
       run: |
-        bundle exec rake
+        bundle exec rake test_app
+        bundle exec rake spec
+    - name: Run Rubocop
+      run: |
+        bundle exec rubocop

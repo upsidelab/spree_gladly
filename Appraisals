@@ -1,4 +1,6 @@
 appraise 'spree-3-1' do
+  gem 'sqlite3', '~> 1.3.6'
+  gem "sprockets", "~> 3.7.2"
   gem 'spree_core',               '~> 3.1.0'
   gem 'pg',                       '~> 0.18'
   gem 'factory_girl'
