@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email        = 'hello@upsidelab.io'
 
   spec.summary       = 'Spree Connector API'
-  spec.homepage      = "http://upsidelab.io"
+  spec.homepage      = 'https://upsidelab.io'
 
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
   spec.metadata["homepage_uri"] = spec.homepage
@@ -25,9 +25,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'spree_core'
   spec.add_dependency 'spree_extension'
-  spec.add_dependency 'dry-validation'
   spec.add_dependency 'jsonapi-serializer'
 
-  spec.add_development_dependency 'dotenv-rails'
+  spec.add_development_dependency 'shoulda-matchers'
   spec.add_development_dependency 'spree_dev_tools'
 end

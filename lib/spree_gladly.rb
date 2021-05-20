@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'spree_gladly/version'
-
-module SpreeGladly
-  class Error < StandardError; end
-  # Your code goes here...
-end
+require 'spree_core'
+require 'spree_extension'
+require 'spree_gladly/version'
+require 'spree_gladly/engine'

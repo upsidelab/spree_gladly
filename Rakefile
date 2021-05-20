@@ -1,12 +1,23 @@
 # frozen_string_literal: true
 
-require 'bundler/gem_tasks'
+require 'bundler'
+Bundler::GemHelper.install_tasks
+
 require 'rspec/core/rake_task'
+require 'spree/testing_support/extension_rake'
 
-RSpec::Core::RakeTask.new(:spec)
+RSpec::Core::RakeTask.new
 
-require 'rubocop/rake_task'
+task :default do
+  if Dir['spec/dummy'].empty?
+    Rake::Task[:test_app].invoke
+    Dir.chdir('../../')
+  end
+  Rake::Task[:spec].invoke
+end
 
-RuboCop::RakeTask.new
-
-task default: %i[spec rubocop]
+desc 'Generates a dummy app for testing'
+task :test_app do
+  ENV['LIB_NAME'] = 'spree_gladly'
+  Rake::Task['extension:test_app'].invoke
+end
