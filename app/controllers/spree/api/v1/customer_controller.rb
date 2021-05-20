@@ -5,6 +5,7 @@ module Spree
         before_action :validate_params, only: :lookup
 
         def lookup
+          byebug
           render json: :ok
         end
 
