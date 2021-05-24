@@ -10,6 +10,9 @@ require 'database_cleaner'
 # in spec/support/ and its subdirectories.
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 
+require 'openssl'
+require 'timecop'
+
 # Requires factories and other useful helpers defined in spree_core.
 require 'spree/testing_support/caching'
 require 'spree/testing_support/controller_requests'
