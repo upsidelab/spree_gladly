@@ -35,6 +35,9 @@ Layout/LineLength:
 Lint/RedundantCopEnableDirective:
   Enabled: false
 
+Metrics/BlockLength:
+  IgnoredMethods: ['describe', 'context']
+
 Metrics/MethodLength:
   Max: 20
 
