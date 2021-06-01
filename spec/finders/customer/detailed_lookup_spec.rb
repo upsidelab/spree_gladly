@@ -6,15 +6,15 @@ describe Customer::DetailedLookup do
   describe '#execute' do
     context 'customers with order' do
       let!(:customer) { create(:user_with_addreses) }
-      let!(:customer1) { create(:user_with_addreses) }
+      let!(:other_customer) { create(:user_with_addreses) }
       let!(:order) { create(:completed_order_with_pending_payment, user: customer) }
-      let!(:order1) { create(:completed_order_with_pending_payment, user: customer1) }
+      let!(:order1) { create(:completed_order_with_pending_payment, user: other_customer) }
 
       let(:params) do
         {
           query: {
             emails: [customer.email],
-            phones: [customer1.ship_address.phone],
+            phones: [other_customer.ship_address.phone],
             name: customer.ship_address.full_name
           }
         }
@@ -28,13 +28,13 @@ describe Customer::DetailedLookup do
 
     context 'customers without orders' do
       let!(:customer) { create(:user_with_addreses) }
-      let!(:customer1) { create(:user_with_addreses) }
+      let!(:other_customer) { create(:user_with_addreses) }
 
       let(:params) do
         {
           query: {
             emails: [customer.email],
-            phones: [customer1.ship_address.phone],
+            phones: [other_customer.ship_address.phone],
             name: customer.ship_address.full_name
           }
         }

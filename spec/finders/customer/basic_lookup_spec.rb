@@ -26,12 +26,12 @@ describe Customer::BasicLookup do
 
     context 'searching by all params' do
       let!(:customer) { create(:user_with_addreses) }
-      let!(:customer1) { create(:user_with_addreses) }
+      let!(:other_customer) { create(:user_with_addreses) }
       let(:params) do
         {
           query: {
             emails: [customer.email],
-            phones: [customer1.ship_address.phone],
+            phones: [other_customer.ship_address.phone],
             name: customer.ship_address.full_name
           }
         }
@@ -46,7 +46,7 @@ describe Customer::BasicLookup do
 
     context 'searching by email' do
       let!(:customer) { create(:user, email: 'test@example.com') }
-      let!(:customer1) { create(:user, email: 'dummy@example.com') }
+      let!(:other_customer) { create(:user, email: 'dummy@example.com') }
 
       context 'with single email address' do
         let(:params) do
@@ -68,7 +68,7 @@ describe Customer::BasicLookup do
         let(:params) do
           {
             query: {
-              emails: [customer.email, customer1.email]
+              emails: [customer.email, other_customer.email]
             }
           }
         end
@@ -99,7 +99,7 @@ describe Customer::BasicLookup do
 
     context 'searching by phone_numbers' do
       let!(:customer) { create(:user_with_addreses) }
-      let!(:customer1) { create(:user_with_addreses) }
+      let!(:other_customer) { create(:user_with_addreses) }
 
       context 'with single phone number' do
         let(:params) do
@@ -110,7 +110,7 @@ describe Customer::BasicLookup do
           }
         end
 
-        before { customer1.ship_address.update(phone: '666-666-666') }
+        before { other_customer.ship_address.update(phone: '666-666-666') }
 
         it 'return single result' do
           expect(Spree.user_class.all.size).to eq 2
@@ -123,7 +123,7 @@ describe Customer::BasicLookup do
         let(:params) do
           {
             query: {
-              phones: [customer.ship_address.phone, customer1.ship_address.phone]
+              phones: [customer.ship_address.phone, other_customer.ship_address.phone]
             }
           }
         end

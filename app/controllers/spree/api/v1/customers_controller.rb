@@ -5,11 +5,12 @@ module Spree
         before_action :validate_params, only: :lookup
 
         def lookup
-          collection = customer_lookup(type: params['lookupLevel'].downcase.to_sym).execute
+          lookup_level = params['lookupLevel'].downcase.to_sym
+          collection = customer_lookup(type: lookup_level).execute
 
           # add some general class where dev be able to configure out serializers
           render json: serialize_collection(
-            type: params['lookupLevel'].downcase.to_sym,
+            type: lookup_level,
             collection: collection
           ).serializable_hash
         end
@@ -26,8 +27,8 @@ module Spree
         # add some general class where dev be able to configure out those
         def customer_lookup(type:)
           {
-            detailed: ::Customer::DetailedLookup.new(params: params),
-            basic: ::Customer::BasicLookup.new(params: params)
+            detailed: Customer::DetailedLookup.new(params: params),
+            basic: Customer::BasicLookup.new(params: params)
           }[type]
         end
 

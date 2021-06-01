@@ -1,13 +1,12 @@
 require 'spec_helper'
 
 describe ::Spree::Api::V1::CustomersController, type: :request do
-
   describe '#lookup' do
     let!(:address) { create(:address) }
     let!(:user) { create(:user, ship_address: address, bill_address: address) }
 
     context 'basic lookup' do
-      context 'with valid params' do
+      context 'given valid params' do
         let(:params) do
           {
             lookupLevel: 'BASIC',
@@ -32,7 +31,7 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
     end
 
     context 'detailed lookup' do
-      context 'with valid params' do
+      context 'given valid params' do
         let(:params) do
           {
             lookupLevel: 'DETAILED',
