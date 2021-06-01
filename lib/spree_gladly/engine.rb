@@ -5,6 +5,8 @@ module SpreeGladly
     isolate_namespace Spree
     engine_name 'spree_gladly'
 
+    config.spree_gladly = SpreeGladly
+
     # use rspec for tests
     config.generators do |g|
       g.test_framework :rspec

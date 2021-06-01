@@ -2,7 +2,7 @@
 
 module Auth
   class SignatureValidator
-    def initialize(key, threshold = nil)
+    def initialize(key = SpreeGladly.signing_key, threshold = SpreeGladly.signing_threshold)
       @key = key
       @threshold = threshold
     end
