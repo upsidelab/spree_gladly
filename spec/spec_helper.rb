@@ -4,6 +4,8 @@ ENV['RAILS_ENV'] = 'test'
 require File.expand_path('../dummy/config/environment.rb', __FILE__)
 
 require 'rspec/rails'
+require 'ffaker'
+require 'database_cleaner'
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
@@ -63,11 +65,13 @@ RSpec.configure do |config|
     Rails.cache.clear
   end
 
-  config.before(type: :feature) do
-    DatabaseCleaner.start
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :truncation
   end
 
-  config.append_after(type: :feature) do
-    DatabaseCleaner.clean
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 end
