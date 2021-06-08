@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe ::Spree::Api::V1::CustomersController, type: :request do
@@ -87,6 +89,7 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
         let(:params) do
           {
             lookupLevel: 'BASIC',
+            uniqueMatchRequired: false,
             query: {
               emails: user.email,
               phones: [user.ship_address.phone],
@@ -112,6 +115,29 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
           expect(results['results'].first['phone']).to eq user.ship_address.phone
         end
       end
+
+      context 'given invalid params' do
+        let(:params) do
+          {
+            lookupLevel: 'BASIC',
+            query: {}
+          }.as_json
+        end
+
+        before { post '/api/v1/customers/lookup', params: params }
+
+        it 'return HTTP 422' do
+          expect(response.status).to eq 422
+        end
+
+        it 'return errors' do
+          errors = JSON.parse(response.body)
+          expect(errors['errors']&.size).to eq 1
+          expect(errors['errors'].first['attr']).to eq 'uniqueMatchRequired'
+          expect(errors['errors'].first['code']).to eq 'missing'
+          expect(errors['errors'].first['detail']).to eq 'uniqueMatchRequired must be present'
+        end
+      end
     end
 
     context 'detailed lookup' do
@@ -121,6 +147,7 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
         let(:params) do
           {
             lookupLevel: 'DETAILED',
+            uniqueMatchRequired: true,
             query: {
               emails: user.email,
               externalCustomerId: user.id.to_s
@@ -146,6 +173,29 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
           expect(results['results'].first['emails']).not_to be_empty
           expect(results['results'].first['phones']).not_to be_empty
           expect(results['results'].first['transactions']).not_to be_empty
+        end
+      end
+
+      context 'given invalid params' do
+        let(:params) do
+          {
+            lookupLevel: 'DETAILED',
+            uniqueMatchRequired: false,
+            query: {
+              emails: user.email
+            }
+          }.as_json
+        end
+
+        before { post '/api/v1/customers/lookup', params: params }
+
+        it 'return HTTP 422' do
+          expect(response.status).to eq 422
+        end
+
+        it 'return errors' do
+          errors = JSON.parse(response.body)
+          expect(errors['errors']&.size).to eq 2
         end
       end
     end
