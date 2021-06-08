@@ -2,12 +2,14 @@
 
 module Auth
   class SignatureValidator
-    def initialize(key, threshold = nil)
+    def initialize(key = SpreeGladly.signing_key, threshold = SpreeGladly.signing_threshold)
       @key = key
       @threshold = threshold
     end
 
     def validate(request)
+      raise Auth::MissingKeyError, 'Signing Key is not set' unless @key.present?
+
       authorization_header = authorization_header(request)
       time_header = time_header(request)
 

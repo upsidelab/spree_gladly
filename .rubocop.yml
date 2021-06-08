@@ -28,6 +28,9 @@ Style/FrozenStringLiteralComment:
 Style/SpecialGlobalVars:
   Enabled: false
 
+Style/ClassVars:
+  Enabled: false
+
 Layout/LineLength:
   Enabled: true
   Max: 120

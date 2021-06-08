@@ -8,6 +8,15 @@ describe Auth::SignatureValidator do
   subject { described_class.new(api_key, threshold).validate(request) }
 
   describe '#validate' do
+    context 'given an unset signing key' do
+      let(:request) { 'whatever' }
+      let(:api_key) { nil }
+
+      it 'raise an error' do
+        expect { subject }.to raise_error(Auth::MissingKeyError)
+      end
+    end
+
     context 'given no Gladly-Authorization header' do
       let(:request) do
         # rubocop:disable Layout/LineLength
