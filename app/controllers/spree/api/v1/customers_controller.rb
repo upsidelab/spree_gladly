@@ -24,17 +24,33 @@ module Spree
 
         def serialize_collection(type:, collection:)
           {
-            detailed: Customer::DetailedSerializer.new(collection, { is_collection: true }),
-            basic: Customer::BasicSerializer.new(collection)
+            detailed: detailed_customer_serializer.new(collection, { is_collection: true }),
+            basic: basic_customer_serializer.new(collection)
           }[type]
         end
 
         # add some general class where dev be able to configure out those
         def customer_lookup(type:)
           {
-            detailed: Customer::DetailedLookup.new(params: params),
-            basic: Customer::BasicLookup.new(params: params)
+            detailed: detailed_customer_lookup.new(params: params),
+            basic: basic_customer_lookup.new(params: params)
           }[type]
+        end
+
+        def detailed_customer_serializer
+          SpreeGladly.detailed_customer_serializer || Customer::DetailedSerializer
+        end
+
+        def basic_customer_serializer
+          SpreeGladly.basic_customer_serializer || Customer::BasicSerializer
+        end
+
+        def detailed_customer_lookup
+          SpreeGladly.detailed_customer_lookup || Customer::DetailedLookup
+        end
+
+        def basic_customer_lookup
+          SpreeGladly.basic_customer_lookup || Customer::BasicLookup
         end
 
         def validate_signature

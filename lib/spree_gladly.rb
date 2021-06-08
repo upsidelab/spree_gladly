@@ -13,6 +13,18 @@ module SpreeGladly
   mattr_accessor :signing_threshold
   @@signing_threshold = nil
 
+  mattr_accessor :basic_customer_serializer
+  @@basic_customer_serializer = nil
+
+  mattr_accessor :detailed_customer_serializer
+  @@detailed_customer_serializer = nil
+
+  mattr_accessor :basic_customer_lookup
+  @@basic_customer_lookup = nil
+
+  mattr_accessor :detailed_customer_lookup
+  @@detailed_customer_lookup = nil
+
   def self.setup
     yield self
   end
