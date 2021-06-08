@@ -38,13 +38,6 @@ module Spree
         end
 
         def validate_signature
-          unless SpreeGladly.signing_key.present?
-            unless Rails.env.test?
-              Rails.logger.warn '[GLADLY] Please ensure that you have set the SpreeGladly.signing_key in production'
-            end
-            return true
-          end
-
           Auth::SignatureValidator.new.validate(request)
         end
 

@@ -8,6 +8,8 @@ module Auth
     end
 
     def validate(request)
+      raise Auth::MissingKeyError, 'Signing Key is not set' unless @key.present?
+
       authorization_header = authorization_header(request)
       time_header = time_header(request)
 

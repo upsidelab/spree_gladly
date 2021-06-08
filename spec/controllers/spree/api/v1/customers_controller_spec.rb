@@ -81,6 +81,8 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
     end
 
     context 'basic lookup' do
+      before { stub_signature_validator }
+
       context 'given valid params' do
         let(:params) do
           {
@@ -106,6 +108,8 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
     end
 
     context 'detailed lookup' do
+      before { stub_signature_validator }
+
       context 'given valid params' do
         let(:params) do
           {
@@ -134,6 +138,11 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
           expect(results['data'][0]['attributes']['payments']).to eq nil
         end
       end
+    end
+
+    def stub_signature_validator
+      signature_validator = double('SignatureValidator', { validate: true })
+      allow(Auth::SignatureValidator).to receive(:new).and_return(signature_validator)
     end
   end
 end
