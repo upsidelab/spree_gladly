@@ -7,7 +7,7 @@ module Spree
         before_action :validate_signature, only: :lookup
         before_action :validate_params, only: :lookup
 
-        rescue_from Auth::Error, with: :authorization_error
+        rescue_from ::Auth::Error, with: :authorization_error
 
         def lookup
           lookup_level = params['lookupLevel'].downcase.to_sym
@@ -38,7 +38,7 @@ module Spree
         end
 
         def validate_signature
-          Auth::SignatureValidator.new.validate(request)
+          ::Auth::SignatureValidator.new.validate(request)
         end
 
         def authorization_error(error)
