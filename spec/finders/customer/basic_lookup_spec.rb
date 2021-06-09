@@ -30,7 +30,7 @@ describe Customer::BasicLookup do
       let(:params) do
         {
           query: {
-            emails: [customer.email],
+            emails: customer.email,
             phones: [other_customer.ship_address.phone],
             name: customer.ship_address.full_name
           }
@@ -52,7 +52,7 @@ describe Customer::BasicLookup do
         let(:params) do
           {
             query: {
-              emails: [customer.email]
+              emails: customer.email
             }
           }
         end
@@ -68,7 +68,7 @@ describe Customer::BasicLookup do
         let(:params) do
           {
             query: {
-              emails: [customer.email, other_customer.email]
+              emails: "#{customer.email}, #{other_customer.email}"
             }
           }
         end

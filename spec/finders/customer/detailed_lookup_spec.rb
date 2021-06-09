@@ -13,7 +13,7 @@ describe Customer::DetailedLookup do
       let(:params) do
         {
           query: {
-            emails: [customer.email],
+            emails: customer.email,
             phones: [other_customer.ship_address.phone],
             name: customer.ship_address.full_name
           }
@@ -33,7 +33,7 @@ describe Customer::DetailedLookup do
       let(:params) do
         {
           query: {
-            emails: [customer.email],
+            emails: customer.email,
             phones: [other_customer.ship_address.phone],
             name: customer.ship_address.full_name
           }
@@ -56,7 +56,7 @@ describe Customer::DetailedLookup do
         let(:params) do
           {
             query: {
-              emails: [customer.email],
+              emails: customer.email,
               name: customer.ship_address.full_name
             }
           }
@@ -76,7 +76,7 @@ describe Customer::DetailedLookup do
         let(:params) do
           {
             query: {
-              emails: [customer.email],
+              emails: customer.email,
               name: customer.ship_address.full_name
             }
           }
@@ -97,7 +97,7 @@ describe Customer::DetailedLookup do
       let(:params) do
         {
           query: {
-            emails: ['james.bond@example.com']
+            emails: 'james.bond@example.com'
           }
         }
       end
