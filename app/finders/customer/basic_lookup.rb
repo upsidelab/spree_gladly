@@ -24,7 +24,8 @@ module Customer
     def by_email
       return [] if emails.nil?
 
-      scope.where(spree_users: { email: emails })
+      formatted_emails = emails.split(',').map(&:strip)
+      scope.where(spree_users: { email: formatted_emails })
     end
 
     def by_name
