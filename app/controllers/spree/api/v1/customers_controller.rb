@@ -7,7 +7,9 @@ module Spree
         before_action :validate_signature, only: :lookup
         before_action :validate_params, only: :lookup
 
-        rescue_from ::Auth::Error, with: :authorization_error
+        rescue_from ::Auth::InvalidSignatureError, with: :authorization_error
+        rescue_from ::Auth::MissingKeyError, with: :authorization_error
+        rescue_from ::Auth::HeaderParseError, with: :authorization_error
 
         def lookup
           lookup_level = params['lookupLevel'].downcase.to_sym
