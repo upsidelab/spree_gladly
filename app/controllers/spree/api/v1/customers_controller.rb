@@ -19,16 +19,18 @@ module Spree
           render json: serialize_collection(
             type: lookup_level,
             collection: collection
-          ).serializable_hash
+          )
         end
 
         private
 
         def serialize_collection(type:, collection:)
-          {
+          serialized = {
             detailed: Customer::DetailedSerializer.new(collection, { is_collection: true }),
-            basic: Customer::BasicSerializer.new(collection)
-          }[type]
+            basic: Customer::BasicSerializer.new(collection, { is_collection: true })
+          }[type].serializable_hash
+
+          { results: serialized[:data].map { |client| client[:attributes] } }
         end
 
         # add some general class where dev be able to configure out those
