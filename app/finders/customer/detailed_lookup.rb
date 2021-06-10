@@ -1,9 +1,5 @@
 module Customer
-  class DetailedLookup
-    def initialize(params:)
-      @params = params
-    end
-
+  class DetailedLookup < Customer::BaseLookup
     def execute
       customers_id = customer_scope.map(&:id)
 
@@ -11,8 +7,6 @@ module Customer
     end
 
     private
-
-    attr_reader :params
 
     def detailed_report(customer_ids:)
       customer_orders(customer_ids: customer_ids) + guest_orders
