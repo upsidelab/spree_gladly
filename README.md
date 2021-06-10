@@ -16,9 +16,11 @@ And then execute:
 
     $ bundle install
 
-Or install it yourself as:
+Next you should run the generator:
 
-    $ gem install spree_gladly
+    $ bundle exec rails generate spree_gladly:install
+
+The generator will create an initializer that describes SpreeGladly's configuration options. Using the initializer, you can set options related to Gladly's request authorization, such as the signing key or the signing threshold.
 
 ## Usage
 
