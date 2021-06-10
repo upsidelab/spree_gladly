@@ -1,14 +1,5 @@
 module Customer
-  class BasicLookup
-    def initialize(params:)
-      @params = params
-      @query = params.include?(:query) ? params.fetch(:query) : {}
-
-      @emails = query[:emails]
-      @phones = query[:phones]
-      @name = query[:name]
-    end
-
+  class BasicLookup < Customer::Base
     def execute
       customers = by_email
       customers += by_name
@@ -19,13 +10,10 @@ module Customer
 
     private
 
-    attr_reader :query, :emails, :phones, :name
-
     def by_email
       return [] if emails.nil?
 
-      formatted_emails = emails.split(',').map(&:strip)
-      scope.where(spree_users: { email: formatted_emails })
+      scope.where(spree_users: { email: emails })
     end
 
     def by_name
