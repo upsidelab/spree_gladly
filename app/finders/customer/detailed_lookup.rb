@@ -1,5 +1,5 @@
 module Customer
-  class DetailedLookup < Customer::Base
+  class DetailedLookup < Customer::BaseLookup
     def execute
       customers_id = customer_scope.map(&:id)
 

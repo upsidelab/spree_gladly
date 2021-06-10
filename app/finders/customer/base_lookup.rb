@@ -1,5 +1,5 @@
 module Customer
-  class Base
+  class BaseLookup
     def initialize(params:)
       @params = params
       @query = params.include?(:query) ? params.fetch(:query) : {}

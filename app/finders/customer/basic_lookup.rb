@@ -1,5 +1,5 @@
 module Customer
-  class BasicLookup < Customer::Base
+  class BasicLookup < Customer::BaseLookup
     def execute
       customers = by_email
       customers += by_name
