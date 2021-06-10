@@ -24,6 +24,45 @@ describe Customer::BasicLookup do
       end
     end
 
+    context 'various params type' do
+      let!(:customer) { create(:user_with_addreses) }
+      let!(:other_customer) { create(:user_with_addreses) }
+
+      context 'given params as array' do
+        let(:params) do
+          {
+            query: {
+              emails: [customer.email, other_customer.email],
+              phones: [other_customer.ship_address.phone, customer.ship_address.phone]
+            }
+          }
+        end
+
+        it 'return results' do
+          expect(Spree.user_class.all.size).to eq 2
+          result = subject.execute
+          expect(result.size).to eq 2
+        end
+      end
+
+      context 'given params as string' do
+        let(:params) do
+          {
+            query: {
+              emails: "#{customer.email}, #{other_customer.email}",
+              phones: "#{other_customer.ship_address.phone}, #{customer.ship_address.phone}"
+            }
+          }
+        end
+
+        it 'return results' do
+          expect(Spree.user_class.all.size).to eq 2
+          result = subject.execute
+          expect(result.size).to eq 2
+        end
+      end
+    end
+
     context 'searching by all params' do
       let!(:customer) { create(:user_with_addreses) }
       let!(:other_customer) { create(:user_with_addreses) }
