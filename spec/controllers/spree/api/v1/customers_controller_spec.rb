@@ -106,7 +106,7 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
 
           expect(results['results']&.size).to eq 1
           expect(results['results'].first.keys.sort).to eq %w[externalCustomerId name email phone].sort
-          expect(results['results'].first['externalCustomerId']).to eq user.id
+          expect(results['results'].first['externalCustomerId']).to eq user.id.to_s
           expect(results['results'].first['name']).to eq user.ship_address.full_name
           expect(results['results'].first['email']).to eq user.email
           expect(results['results'].first['phone']).to eq user.ship_address.phone
@@ -142,7 +142,7 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
           expect(results['results']&.size).to eq 1
           expect(results['results'].first.keys.sort)
             .to eq %w[externalCustomerId name address emails phones transactions].sort
-          expect(results['results'].first['externalCustomerId']).to eq user.id
+          expect(results['results'].first['externalCustomerId']).to eq user.id.to_s
           expect(results['results'].first['name']).to eq user.ship_address.full_name
           expect(results['results'].first['emails']).not_to be_empty
           expect(results['results'].first['phones']).not_to be_empty

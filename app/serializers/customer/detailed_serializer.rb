@@ -2,7 +2,9 @@ module Customer
   class DetailedSerializer
     include JSONAPI::Serializer
 
-    attribute :externalCustomerId, &:id
+    attribute :externalCustomerId do |user|
+      user.id.to_s
+    end
 
     attribute :name do |user|
       user_addr = user.ship_address || user.bill_address
