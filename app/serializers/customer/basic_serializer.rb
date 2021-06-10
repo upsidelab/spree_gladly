@@ -2,6 +2,8 @@ module Customer
   class BasicSerializer
     include JSONAPI::Serializer
 
+    attribute :externalCustomerId, &:id
+
     attributes :email
 
     attribute :name do |user|
