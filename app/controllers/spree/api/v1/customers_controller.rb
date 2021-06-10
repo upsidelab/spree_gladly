@@ -41,7 +41,7 @@ module Spree
         end
 
         def validate_signature
-          ::Auth::SignatureValidator.new.validate(request)
+          ::Auth::SignatureValidator.new(SpreeGladly.signing_key, SpreeGladly.signing_threshold).validate(request)
         end
 
         def authorization_error(error)
