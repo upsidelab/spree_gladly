@@ -1,21 +1,19 @@
 module Customer
   class DetailedLookup < Customer::BaseLookup
     def execute
-      customers_id = customer_scope.map(&:id)
-
-      detailed_report(customer_ids: customers_id)
+      detailed_report
     end
 
     private
 
-    def detailed_report(customer_ids:)
-      customer_orders(customer_ids: customer_ids) + guest_orders
+    def detailed_report
+      customer
     end
 
-    def customer_orders(customer_ids:)
-      return [] if customer_ids.empty?
+    def customer_orders(customer_id:)
+      return [] if customer_id.nil?
 
-      order_scope.where(user_id: customer_ids)
+      order_scope.where(user_id: customer_id)
     end
 
     def guest_orders
@@ -28,8 +26,8 @@ module Customer
       Spree::Order.unscoped.includes(:line_items, :payments, :shipments)
     end
 
-    def customer_scope
-      Customer::BasicLookup.new(params: params).execute
+    def customer
+      @customer ||= Spree.user_class.includes(orders: [:line_items, :payments, :shipments]).find(params[:query][:externalCustomerId])
     end
   end
 end

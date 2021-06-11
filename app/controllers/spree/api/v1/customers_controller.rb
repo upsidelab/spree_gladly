@@ -26,11 +26,15 @@ module Spree
 
         def serialize_collection(type:, collection:)
           serialized = {
-            detailed: Customer::DetailedSerializer.new(collection, { is_collection: true }),
+            detailed: Customer::DetailedSerializer.new(collection),
             basic: Customer::BasicSerializer.new(collection, { is_collection: true })
           }[type].serializable_hash
 
-          { results: serialized[:data].map { |client| client[:attributes] } }
+          if serialized[:data].is_a?(Array)
+            { results: serialized[:data].map { |client| client[:attributes] } }
+          else
+            { results: serialized[:data][:attributes] }
+          end
         end
 
         # add some general class where dev be able to configure out those
