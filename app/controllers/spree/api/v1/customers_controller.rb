@@ -33,7 +33,7 @@ module Spree
           if serialized[:data].is_a?(Array)
             { results: serialized[:data].map { |client| client[:attributes] } }
           else
-            { results: serialized[:data][:attributes] }
+            { results: [serialized[:data][:attributes]] }
           end
         end
 
