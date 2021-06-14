@@ -14,6 +14,7 @@ appraise 'spree-3-7' do
   gem 'spree_core',               '~> 3.7.0'
   gem 'spree_backend',            '~> 3.7.0'
   gem 'rails-controller-testing'
+  gem 'sass-rails'
   gem 'rubocop'
 end
 
