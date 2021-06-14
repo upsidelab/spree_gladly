@@ -21,7 +21,7 @@ module Auth
     private
 
     def validate_time!(time_header)
-      return true unless @threshold
+      return true unless @threshold.positive?
 
       return true if time_header.time + @threshold >= Time.now.utc
 
