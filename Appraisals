@@ -6,6 +6,7 @@ appraise 'spree-3-1' do
   gem 'pg',                       '~> 0.18'
   gem 'factory_girl'
   gem 'rails_test_params_backport'
+  gem 'sass-rails'
   gem 'rubocop'
 end
 
