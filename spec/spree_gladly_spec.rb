@@ -8,7 +8,7 @@ RSpec.describe SpreeGladly do
   describe '.setup' do
     it 'yields self' do
       described_class.setup do |config|
-        expect(config).to eq described_class
+        expect(config).to eq SpreeGladly::Config
       end
     end
   end

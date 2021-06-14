@@ -5,7 +5,9 @@ module SpreeGladly
     isolate_namespace Spree
     engine_name 'spree_gladly'
 
-    config.spree_gladly = SpreeGladly
+    initializer 'spree_avatax_official.environment', before: :load_config_initializers do |_app|
+      SpreeGladly::Config = SpreeGladly::Configuration.new
+    end
 
     # use rspec for tests
     config.generators do |g|
