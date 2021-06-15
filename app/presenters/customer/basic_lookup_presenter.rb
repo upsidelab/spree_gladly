@@ -26,7 +26,7 @@ module Customer
     end
 
     def address(user)
-      user.ship_address || user.bill_address
+      @address ||= user.ship_address || user.bill_address
     end
   end
 end

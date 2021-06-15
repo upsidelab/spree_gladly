@@ -18,18 +18,18 @@ module Spree
           render json: serialize_collection(
             type: lookup_level,
             collection: collection
-          )
+          ), status: 200
         end
 
         private
 
         def serialize_collection(type:, collection:)
-          serialized = {
+          presenter = {
             detailed: SpreeGladly.detailed_lookup_presenter.new(resource: collection),
             basic: SpreeGladly.basic_lookup_presenter.new(resource: collection)
-          }[type].to_h
+          }[type]
 
-          { results: serialized }
+          { results: presenter.to_h }
         end
 
         # add some general class where dev be able to configure out those
