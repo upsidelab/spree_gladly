@@ -31,14 +31,12 @@ module Customer
       resource.transactions.map do |transaction|
         {
           type: 'ORDER',
-          attributes: {
-            products: transaction_products(transaction: transaction),
-            orderLink: '',
-            note: transaction&.special_instructions,
-            orderTotal: transaction.total,
-            orderNumber: transaction.number,
-            createdAt: transaction.created_at
-          }
+          products: transaction_products(transaction: transaction),
+          orderLink: '',
+          note: transaction&.special_instructions.to_s,
+          orderTotal: transaction.total,
+          orderNumber: transaction.number,
+          createdAt: transaction.created_at
         }
       end
     end
