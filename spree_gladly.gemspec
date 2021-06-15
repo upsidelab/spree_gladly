@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'spree_core'
   spec.add_dependency 'spree_backend'
   spec.add_dependency 'spree_extension'
+  spec.add_dependency 'deface', '~> 1.0'
 
   spec.add_development_dependency 'shoulda-matchers'
   spec.add_development_dependency 'spree_dev_tools'
