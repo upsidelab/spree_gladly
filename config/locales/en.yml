@@ -1,0 +1,10 @@
+en:
+  spree:
+    spree_gladly:
+      settings: Gladly Settings
+      request_signing: Customer Lookup Request Signing
+      signing_key: Signing Key
+      signing_threshold: Signing Threshold
+      signing_threshold_error: Signing Threshold should be empty, 0 or positive
+      save_preferences: Save Gladly preferences
+      save_success: Updated Gladly configuration

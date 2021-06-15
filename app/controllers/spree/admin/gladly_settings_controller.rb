@@ -12,11 +12,11 @@ module Spree
 
       def update
         if params[:signing_threshold].present? && params[:signing_threshold] !~ POSITIVE_INT_REGEX
-          flash[:error] = 'Signing Threshold should be empty, 0 or positive'
+          flash[:error] = Spree.t('spree_gladly.signing_threshold_error')
         else
           set_signing_key
           set_signing_threshold
-          flash[:success] = 'Updated Gladly configuration'
+          flash[:success] = Spree.t('spree_gladly.save_success')
         end
 
         redirect_to edit_admin_gladly_settings_path

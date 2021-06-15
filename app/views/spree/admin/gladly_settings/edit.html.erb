@@ -1,22 +1,22 @@
-<h1>Gladly Settings</h1>
+<h1><%= Spree.t('spree_gladly.settings') %></h1>
 
 <%= form_tag(admin_gladly_settings_path, method: :put, id: :gladly_settings_form) do %>
   <div class="yui-g">
     <div class="yui-u first">
       <fieldset>
-        <legend>Customer Lookup Request Signing</legend>
+        <legend><%= Spree.t('spree_gladly.request_signing') %></legend>
         <p>
-          <label>Signing Key</label><br />
+          <label><%= Spree.t('spree_gladly.signing_key') %></label><br />
           <%= text_field_tag('signing_key', @signing_key, size: 46, maxlength: 256, class: 'form-control') %>
         </p>
 
         <p>
-          <label>Signing Threshold</label><br />
+          <label><%= Spree.t('spree_gladly.signing_threshold') %></label><br />
           <%= number_field_tag('signing_threshold', @signing_threshold, min: 1, class: 'form-control') %>
         </p>
       </fieldset>
     </div>
   </div>
 
-  <p class="form-buttons"><%= button 'Save Gladly preferences' %></p>
+  <p class="form-buttons"><%= button Spree.t('spree_gladly.save_preferences') %></p>
 <% end %>
