@@ -45,7 +45,14 @@ module Customer
 
     def transaction_products(transaction:)
       transaction.line_items.map do |item|
-        { name: item.variant.name, status: item_status(item: item), sku: item.variant.sku }
+        {
+          name: item.variant.name,
+          status: item_status(item: item),
+          sku: item.variant.sku,
+          quantity: item.quantity,
+          total: item.total,
+          unitPrice: item.price
+        }
       end
     end
 
