@@ -25,8 +25,8 @@ module Spree
 
         def serialize_collection(type:, collection:)
           presenter = {
-            detailed: SpreeGladly.detailed_lookup_presenter.new(resource: collection),
-            basic: SpreeGladly.basic_lookup_presenter.new(resource: collection)
+            detailed: SpreeGladly::Config.detailed_lookup_presenter.new(resource: collection),
+            basic: SpreeGladly::Config.basic_lookup_presenter.new(resource: collection)
           }[type]
 
           { results: presenter.to_h }
