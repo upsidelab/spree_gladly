@@ -20,12 +20,14 @@ describe 'Update Gladly Settings spec', type: :feature do
 
       expect(SpreeGladly::Config.signing_key).to eq 'test-apikey-1'
       expect(current_path).to eq '/admin/gladly_settings/edit'
+      expect(page).to have_content 'Updated Gladly configuration'
     end
   end
 
   describe 'signing_threshold' do
     around do |example|
       signing_threshold = SpreeGladly::Config.signing_threshold
+      SpreeGladly::Config.signing_threshold = 123
       example.run
       SpreeGladly::Config.signing_threshold = signing_threshold
     end
@@ -38,6 +40,7 @@ describe 'Update Gladly Settings spec', type: :feature do
 
       expect(SpreeGladly::Config.signing_threshold).to eq 15
       expect(current_path).to eq '/admin/gladly_settings/edit'
+      expect(page).to have_content 'Updated Gladly configuration'
     end
 
     it 'updates signing threshold given an empty value' do
@@ -48,10 +51,21 @@ describe 'Update Gladly Settings spec', type: :feature do
 
       expect(SpreeGladly::Config.signing_threshold).to eq 0
       expect(current_path).to eq '/admin/gladly_settings/edit'
+      expect(page).to have_content 'Updated Gladly configuration'
+    end
+
+    it 'updates signing threshold given 0' do
+      visit '/admin/gladly_settings/edit'
+
+      fill_in 'signing_threshold', with: '0'
+      click_button 'Save Gladly preferences'
+
+      expect(SpreeGladly::Config.signing_threshold).to eq 0
+      expect(current_path).to eq '/admin/gladly_settings/edit'
+      expect(page).to have_content 'Updated Gladly configuration'
     end
 
     it 'does not update signing threshold given an invalid value' do
-      SpreeGladly::Config.signing_threshold = 123
       visit '/admin/gladly_settings/edit'
 
       fill_in 'signing_threshold', with: 'asdf'

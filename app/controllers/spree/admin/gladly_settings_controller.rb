@@ -3,7 +3,7 @@
 module Spree
   module Admin
     class GladlySettingsController < ::Spree::Admin::BaseController
-      POSITIVE_INT_REGEX = /\A[0-9]+\Z/.freeze
+      NONNEGATIVE_INT_REGEX = /\A[0-9]+\Z/.freeze
 
       def edit
         @signing_key = SpreeGladly::Config.signing_key
@@ -11,7 +11,7 @@ module Spree
       end
 
       def update
-        if params[:signing_threshold].present? && params[:signing_threshold] !~ POSITIVE_INT_REGEX
+        if params[:signing_threshold].present? && params[:signing_threshold] !~ NONNEGATIVE_INT_REGEX
           flash[:error] = Spree.t('spree_gladly.signing_threshold_error')
         else
           set_signing_key
