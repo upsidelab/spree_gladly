@@ -18,9 +18,9 @@ module Customer
       resource.map do |user|
         {
           externalCustomerId: user.id.to_s,
-          name: address(user)&.full_name,
+          name: address(user)&.full_name.to_s,
           email: user.email,
-          phone: address(user)&.phone
+          phone: address(user)&.phone.to_s
         }
       end
     end
