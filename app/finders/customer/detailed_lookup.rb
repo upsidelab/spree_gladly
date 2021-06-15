@@ -1,33 +1,27 @@
 module Customer
   class DetailedLookup < Customer::BaseLookup
     def execute
-      detailed_report
+      OpenStruct.new(customer: customer, transactions: transactions)
     end
 
     private
 
-    def detailed_report
-      customer
-    end
+    def transactions
+      return [] unless customer.present?
 
-    def customer_orders(customer_id:)
-      return [] if customer_id.nil?
-
-      order_scope.where(user_id: customer_id)
+      customer.orders + guest_orders
     end
 
     def guest_orders
-      return [] if params.empty?
+      return [] if emails.nil?
 
-      order_scope.where(user_id: nil).where(email: params[:query][:emails])
-    end
-
-    def order_scope
-      Spree::Order.unscoped.includes(:line_items, :payments, :shipments)
+      Spree::Order.includes(:line_items).where(user_id: nil).where(email: customer.email)
     end
 
     def customer
-      @customer ||= Spree.user_class.includes(orders: [:line_items, :payments, :shipments]).find(params[:query][:externalCustomerId])
+      @customer ||= Spree.user_class.includes(orders: %i[line_items]).find(external_customer_id.to_i)
+    rescue ActiveRecord::RecordNotFound
+      []
     end
   end
 end
