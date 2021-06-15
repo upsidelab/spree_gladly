@@ -15,7 +15,6 @@ module Spree
           lookup_level = params['lookupLevel'].downcase.to_sym
           collection = customer_lookup(type: lookup_level).execute
 
-          # add some general class where dev be able to configure out serializers
           render json: serialize_collection(
             type: lookup_level,
             collection: collection
@@ -26,15 +25,11 @@ module Spree
 
         def serialize_collection(type:, collection:)
           serialized = {
-            detailed: Customer::DetailedSerializer.new(collection),
-            basic: Customer::BasicSerializer.new(collection, { is_collection: true })
-          }[type].serializable_hash
+            detailed: SpreeGladly.detailed_lookup_presenter.new(resource: collection),
+            basic: SpreeGladly.basic_lookup_presenter.new(resource: collection)
+          }[type].to_h
 
-          if serialized[:data].is_a?(Array)
-            { results: serialized[:data].map { |client| client[:attributes] } }
-          else
-            { results: [serialized[:data][:attributes]] }
-          end
+          { results: serialized }
         end
 
         # add some general class where dev be able to configure out those
