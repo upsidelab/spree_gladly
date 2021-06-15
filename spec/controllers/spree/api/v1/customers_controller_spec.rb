@@ -123,8 +123,6 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
             lookupLevel: 'DETAILED',
             query: {
               emails: user.email,
-              phones: [user.ship_address.phone],
-              name: user.ship_address.full_name,
               externalCustomerId: user.id.to_s
             }
           }.as_json
@@ -137,7 +135,7 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
           expect(response.status).to eq 200
         end
 
-        xit 'return expected results' do
+        it 'return expected results' do
           results = JSON.parse(response.body)
 
           expect(results['results']&.size).to eq 1
@@ -147,7 +145,7 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
           expect(results['results'].first['name']).to eq user.ship_address.full_name
           expect(results['results'].first['emails']).not_to be_empty
           expect(results['results'].first['phones']).not_to be_empty
-          expect(results['results'].first['transactions']).to be_empty
+          expect(results['results'].first['transactions']).not_to be_empty
         end
       end
     end

@@ -4,47 +4,44 @@ describe Customer::DetailedLookup do
   subject { described_class.new(params: params) }
 
   describe '#execute' do
-    context 'customers with order' do
+    context 'customer with orders' do
       let!(:customer) { create(:user_with_addreses) }
-      let!(:other_customer) { create(:user_with_addreses) }
       let!(:order) { create(:completed_order_with_pending_payment, user: customer) }
-      let!(:order1) { create(:completed_order_with_pending_payment, user: other_customer) }
+      let!(:order1) { create(:completed_order_with_pending_payment, user: customer) }
 
       let(:params) do
         {
           query: {
             emails: customer.email,
-            phones: [other_customer.ship_address.phone],
-            name: customer.ship_address.full_name,
             externalCustomerId: customer.id
           }
         }
       end
 
-      xit 'return customers orders' do
+      it 'return customer orders' do
         result = subject.execute
-        expect(result.size).to eq 2
+        expect(result.customer.id).to eq customer.id
+        expect(result.transactions.size).to eq 2
       end
     end
 
-    context 'customers without orders' do
+    context 'customer without orders' do
       let!(:customer) { create(:user_with_addreses) }
-      let!(:other_customer) { create(:user_with_addreses) }
 
       let(:params) do
         {
           query: {
             emails: customer.email,
-            phones: [other_customer.ship_address.phone],
-            name: customer.ship_address.full_name,
             externalCustomerId: customer.id
           }
         }
       end
 
-      xit 'return empty array' do
+      it 'return empty array' do
         result = subject.execute
-        expect(result).to eq []
+
+        expect(result.customer.id).to eq customer.id
+        expect(result.transactions.size).to eq 0
       end
     end
 
@@ -59,17 +56,16 @@ describe Customer::DetailedLookup do
           {
             query: {
               emails: customer.email,
-              name: customer.ship_address.full_name,
               externalCustomerId: customer.id
             }
           }
         end
 
-        xit 'return orders' do
+        it 'return orders' do
           expect(Spree::Order.all.size).to eq 2
           result = subject.execute
-          expect(result.size).to eq 1
-          expect(result.first.id).to eq guest_order.id
+          expect(result.transactions.size).to eq 1
+          expect(result.transactions.first.id).to eq guest_order.id
         end
       end
 
@@ -80,16 +76,15 @@ describe Customer::DetailedLookup do
           {
             query: {
               emails: customer.email,
-              name: customer.ship_address.full_name,
               externalCustomerId: customer.id
             }
           }
         end
 
-        xit 'return customer orders' do
+        it 'return customer orders' do
           expect(Spree::Order.all.size).to eq 2
           result = subject.execute
-          expect(result.size).to eq 2
+          expect(result.transactions.size).to eq 2
         end
       end
     end
@@ -101,15 +96,17 @@ describe Customer::DetailedLookup do
       let(:params) do
         {
           query: {
-            emails: 'james.bond@example.com'
+            emails: 'james.bond@example.com',
+            externalCustomerId: '0'
           }
         }
       end
 
-      xit 'return empty result' do
+      it 'return empty result' do
         expect(Spree::Order.all.size).to eq 2
         result = subject.execute
-        expect(result.size).to eq 0
+        expect(result.customer.size).to eq 0
+        expect(result.transactions.size).to eq 0
       end
     end
 
@@ -117,18 +114,20 @@ describe Customer::DetailedLookup do
       context 'without query key' do
         let(:params) { {} }
 
-        xit 'return empty array' do
+        it 'return empty array' do
           result = subject.execute
-          expect(result).to eq []
+          expect(result.customer).to eq []
+          expect(result.transactions).to eq []
         end
       end
 
       context 'with empty query key' do
         let(:params) { { query: {} } }
 
-        xit 'return empty array' do
+        it 'return empty array' do
           result = subject.execute
-          expect(result).to eq []
+          expect(result.customer).to eq []
+          expect(result.transactions).to eq []
         end
       end
     end

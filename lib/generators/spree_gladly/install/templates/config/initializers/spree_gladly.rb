@@ -3,6 +3,10 @@ SpreeGladly.setup do |config|
   # We recommend using a secure random string of length over 32.
   config.signing_key = '<%= SecureRandom.base64(32) %>'
 
+  # You can change serializer on your own
+  config.basic_lookup_presenter = Customer::BasicLookupPresenter
+  config.detailed_lookup_presenter = Customer::DetailedLookupPresenter
+
   # The request's timestamp is validated against `signing_threshold` to prevent replay attacks.
   # Setting this value to `nil` disables the threshold validation.
   # Default is `nil`.
