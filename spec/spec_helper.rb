@@ -14,6 +14,7 @@ require 'openssl'
 require 'timecop'
 
 # Requires factories and other useful helpers defined in spree_core.
+require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/caching'
 require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/factories'

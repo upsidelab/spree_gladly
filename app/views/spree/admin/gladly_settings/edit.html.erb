@@ -1,0 +1,25 @@
+<% content_for :page_title do %>
+  <%= Spree.t('spree_gladly.settings') %>
+<% end %>
+
+<h1><%= Spree.t('spree_gladly.settings') %></h1>
+
+<%= form_tag(admin_gladly_settings_path, method: :put, id: :gladly_settings_form) do %>
+  <div class="yui-g">
+    <div class="yui-u first">
+      <fieldset>
+        <p>
+          <label><%= Spree.t('spree_gladly.signing_key') %></label><br />
+          <%= text_field_tag('signing_key', @signing_key, size: 46, maxlength: 256, class: 'form-control') %>
+        </p>
+
+        <p>
+          <label><%= Spree.t('spree_gladly.signing_threshold') %></label><br />
+          <%= number_field_tag('signing_threshold', @signing_threshold, min: 1, class: 'form-control') %>
+        </p>
+      </fieldset>
+    </div>
+  </div>
+
+  <p class="form-buttons"><%= button Spree.t('actions.update'), 'save.svg', 'submit', {class: 'btn-success'} %></p>
+<% end %>

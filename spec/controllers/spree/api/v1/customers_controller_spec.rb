@@ -23,16 +23,16 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
       # rubocop:enable Layout/LineLength
 
       before do
-        SpreeGladly.signing_key = signing_key
-        SpreeGladly.signing_threshold = signing_threshold
+        SpreeGladly::Config.signing_key = signing_key
+        SpreeGladly::Config.signing_threshold = signing_threshold
         Timecop.freeze(Time.new(2019, 2, 13, 21, 42, 16, '+00:00'))
 
         post '/api/v1/customers/lookup', params: body, headers: headers
       end
 
       after do
-        SpreeGladly.signing_key = nil
-        SpreeGladly.signing_threshold = nil
+        SpreeGladly::Config.signing_key = nil
+        SpreeGladly::Config.signing_threshold = nil
         Timecop.return
       end
 

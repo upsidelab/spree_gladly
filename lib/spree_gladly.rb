@@ -4,21 +4,10 @@ require 'spree_core'
 require 'spree_extension'
 require 'spree_gladly/version'
 require 'spree_gladly/engine'
+require 'deface'
 
 module SpreeGladly
-  mattr_accessor :signing_key
-  @@signing_key = nil
-
-  mattr_accessor :signing_threshold
-  @@signing_threshold = nil
-
-  mattr_accessor :basic_lookup_presenter
-  @@basic_lookup_presenter = nil
-
-  mattr_accessor :detailed_lookup_presenter
-  @@detailed_lookup_presenter = nil
-
   def self.setup
-    yield self
+    yield Config
   end
 end

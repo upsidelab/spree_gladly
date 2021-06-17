@@ -3,14 +3,14 @@
 require 'spec_helper'
 
 describe Auth::SignatureValidator do
-  let(:threshold) { nil }
+  let(:threshold) { 0 }
 
   subject { described_class.new(api_key, threshold).validate(request) }
 
   describe '#validate' do
     context 'given an unset signing key' do
       let(:request) { 'whatever' }
-      let(:api_key) { nil }
+      let(:api_key) { '' }
 
       it 'raise an error' do
         expect { subject }.to raise_error(Auth::MissingKeyError)
