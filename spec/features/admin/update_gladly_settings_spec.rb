@@ -16,7 +16,7 @@ describe 'Update Gladly Settings spec', type: :feature do
       visit '/admin/gladly_settings/edit'
 
       fill_in 'signing_key', with: 'test-apikey-1'
-      click_button 'Save Gladly preferences'
+      click_button 'Update'
 
       expect(SpreeGladly::Config.signing_key).to eq 'test-apikey-1'
       expect(current_path).to eq '/admin/gladly_settings/edit'
@@ -36,7 +36,7 @@ describe 'Update Gladly Settings spec', type: :feature do
       visit '/admin/gladly_settings/edit'
 
       fill_in 'signing_threshold', with: '15'
-      click_button 'Save Gladly preferences'
+      click_button 'Update'
 
       expect(SpreeGladly::Config.signing_threshold).to eq 15
       expect(current_path).to eq '/admin/gladly_settings/edit'
@@ -47,7 +47,7 @@ describe 'Update Gladly Settings spec', type: :feature do
       visit '/admin/gladly_settings/edit'
 
       fill_in 'signing_threshold', with: ''
-      click_button 'Save Gladly preferences'
+      click_button 'Update'
 
       expect(SpreeGladly::Config.signing_threshold).to eq 0
       expect(current_path).to eq '/admin/gladly_settings/edit'
@@ -58,7 +58,7 @@ describe 'Update Gladly Settings spec', type: :feature do
       visit '/admin/gladly_settings/edit'
 
       fill_in 'signing_threshold', with: '0'
-      click_button 'Save Gladly preferences'
+      click_button 'Update'
 
       expect(SpreeGladly::Config.signing_threshold).to eq 0
       expect(current_path).to eq '/admin/gladly_settings/edit'
@@ -69,7 +69,7 @@ describe 'Update Gladly Settings spec', type: :feature do
       visit '/admin/gladly_settings/edit'
 
       fill_in 'signing_threshold', with: 'asdf'
-      click_button 'Save Gladly preferences'
+      click_button 'Update'
 
       expect(SpreeGladly::Config.signing_threshold).to eq 123
       expect(current_path).to eq '/admin/gladly_settings/edit'

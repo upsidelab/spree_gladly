@@ -5,7 +5,7 @@ module SpreeGladly
     isolate_namespace Spree
     engine_name 'spree_gladly'
 
-    initializer 'spree_avatax_official.environment', before: :load_config_initializers do |_app|
+    initializer 'spree_gladly.environment', before: :load_config_initializers do |_app|
       SpreeGladly::Config = SpreeGladly::Configuration.new
     end
 
