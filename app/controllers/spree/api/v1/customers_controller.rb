@@ -4,6 +4,7 @@ module Spree
   module Api
     module V1
       class CustomersController < ::ApplicationController
+        skip_before_action :verify_authenticity_token, only: :lookup
         before_action :validate_signature, only: :lookup
         before_action :validate_params, only: :lookup
 
