@@ -1,6 +1,7 @@
-require 'byebug'
 module Customer
   class DetailedLookupPresenter
+    include Spree::Core::Engine.routes.url_helpers
+
     def initialize(resource:)
       @resource = resource
     end
@@ -23,16 +24,17 @@ module Customer
           address: address.to_s&.gsub('<br/>', ' '),
           emails: emails,
           phones: phones,
-          customAttributes: customAttributes,
+          customAttributes: custom_attributes,
           transactions: transactions
         }
       ]
     end
 
-    def customAttributes
+    def custom_attributes
       {
-        lifetimeValue: resource.customer.created_at,
-        totalOrderCount: resource.transactions.size.to_s
+        lifetimeValue: lifetime_value,
+        totalOrderCount: resource.transactions.size.to_s,
+        returnCount: 4.to_s # framebrigde
       }
     end
 
@@ -40,11 +42,12 @@ module Customer
       resource.transactions.map do |transaction|
         {
           type: 'ORDER',
-          products: transaction_products(transaction: transaction),
-          orderLink: '',
-          note: transaction&.special_instructions.to_s,
-          orderTotal: transaction.total,
+          orderStatus: transaction.state,
           orderNumber: transaction.number,
+          products: transaction_products(transaction: transaction),
+          orderLink: edit_admin_order_path(transaction),
+          note: transaction&.special_instructions.to_s,
+          orderTotal: "#{transaction.total} #{transaction.currency}",
           createdAt: transaction.created_at
         }
       end
@@ -55,13 +58,27 @@ module Customer
         {
           name: item.variant.name,
           status: item_status(item: item),
-          sku: item.variant.sku,
-          quantity: item.quantity,
-          total: item.total,
-          unitPrice: item.price,
-          imageUrl: item.product.images.first&.attachment&.url || ''
+          # sku: item.variant.sku,
+          quantity: item.quantity.to_s,
+          # total: item.total,
+          unitPrice: "#{item.price} #{item.order.currency}",
+          imageUrl: item_image_url(item: item),
+          workOrderUrl: 'https://example.com', # framebridge
+          trackingUrl: 'https://fedex.com' # framebridge
         }
       end
+    end
+
+    def lifetime_value
+      value = resource.transactions.sum(&:total).to_s
+
+      "#{value} #{resource.transactions.first.currency}"
+    end
+
+    def item_image_url(item:)
+      return '' if item.product.images.empty?
+
+      item.product.images.first&.attachment&.url
     end
 
     def item_status(item:)
@@ -71,9 +88,7 @@ module Customer
     def emails
       [
         {
-          normalized: resource.customer.email.downcase,
-          original: resource.customer.email,
-          primary: true
+          original: resource.customer.email
         }
       ]
     end
@@ -81,8 +96,7 @@ module Customer
     def phones
       [
         {
-          original: address&.phone,
-          primary: true
+          original: address&.phone
         }
       ]
     end

@@ -30,6 +30,5 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'shoulda-matchers'
   spec.add_development_dependency 'spree_dev_tools'
-  spec.add_development_dependency 'byebug'
   spec.add_development_dependency 'timecop'
 end
