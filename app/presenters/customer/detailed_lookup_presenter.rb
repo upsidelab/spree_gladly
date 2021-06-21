@@ -1,3 +1,4 @@
+require 'byebug'
 module Customer
   class DetailedLookupPresenter
     def initialize(resource:)
@@ -22,9 +23,17 @@ module Customer
           address: address.to_s&.gsub('<br/>', ' '),
           emails: emails,
           phones: phones,
+          customAttributes: customAttributes,
           transactions: transactions
         }
       ]
+    end
+
+    def customAttributes
+      {
+        lifetimeValue: resource.customer.created_at,
+        totalOrderCount: resource.transactions.size.to_s
+      }
     end
 
     def transactions
@@ -49,7 +58,8 @@ module Customer
           sku: item.variant.sku,
           quantity: item.quantity,
           total: item.total,
-          unitPrice: item.price
+          unitPrice: item.price,
+          imageUrl: item.product.images.first&.attachment&.url || ''
         }
       end
     end
