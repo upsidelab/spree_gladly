@@ -14,16 +14,18 @@ services:
 language: ruby
 
 rvm:
-  - 3.0
-  - 2.7
-  - 2.5
   - 2.3
+  - 2.4
+  - 2.5
+  - 2.7
+  - 3.0
 
 env:
   - DB=mysql
   - DB=postgres
 
 gemfile:
+  - gemfiles/spree_3_0.gemfile
   - gemfiles/spree_3_1.gemfile
   - gemfiles/spree_3_7.gemfile
   - gemfiles/spree_master.gemfile
@@ -33,20 +35,30 @@ jobs:
   allow_failures:
     - gemfile: gemfiles/spree_master.gemfile
   exclude:
-    - rvm: 3.0
-      gemfile: gemfiles/spree_3_1.gemfile
-    - rvm: 3.0
+    - rvm: 2.3
       gemfile: gemfiles/spree_3_7.gemfile
+    - rvm: 2.3
+      gemfile: gemfiles/spree_master.gemfile
+    - rvm: 2.4
+      gemfile: gemfiles/spree_3_7.gemfile
+    - rvm: 2.4
+      gemfile: gemfiles/spree_master.gemfile
+    - rvm: 2.5
+      gemfile: gemfiles/spree_3_0.gemfile
+    - rvm: 2.5
+      gemfile: gemfiles/spree_3_1.gemfile
+    - rvm: 2.5
+      gemfile: gemfiles/spree_master.gemfile
+    - rvm: 2.7
+      gemfile: gemfiles/spree_3_0.gemfile
     - rvm: 2.7
       gemfile: gemfiles/spree_3_1.gemfile
-    - rvm: 2.5
+    - rvm: 3.0
+      gemfile: gemfiles/spree_3_0.gemfile
+    - rvm: 3.0
       gemfile: gemfiles/spree_3_1.gemfile
-    - rvm: 2.5
-      gemfile: gemfiles/spree_master.gemfile
-    - rvm: 2.3
+    - rvm: 3.0
       gemfile: gemfiles/spree_3_7.gemfile
-    - rvm: 2.3
-      gemfile: gemfiles/spree_master.gemfile
 
 script:
   - bundle exec rake test_app

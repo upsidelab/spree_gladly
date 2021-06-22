@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# XXX: frozen_string_literal comment breaks on Spree 3.0
 
 Deface::Override.new(
   virtual_path: 'spree/admin/shared/sub_menu/_configuration',
