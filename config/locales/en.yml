@@ -6,3 +6,20 @@ en:
       signing_threshold: Signing Threshold
       signing_threshold_error: Signing Threshold should be empty, 0 or positive
       save_success: Updated Gladly configuration
+      errors:
+        lookupLevel:
+          missing: lookupLevel must be present
+          invalid: lookupLevel must be BASIC or DETAILED
+        uniqueMatchRequired:
+          missing: uniqueMatchRequired must be present
+          invalid: uniqueMatchRequired must be true or false
+          not_true: uniqueMatchRequired must be true for Detailed Lookup
+        query_emails:
+          invalid: query emails must be a nonempty string or an array of nonempty strings
+        query_phones:
+          invalid: query phones must be a nonempty string or an array of nonempty strings
+        query_name:
+          invalid: query name must be a nonempty string
+        query_externalCustomerId:
+          missing: query externalCustomerId must be present for Detailed Lookup
+          invalid: query externalCustomerId must be a nonempty string

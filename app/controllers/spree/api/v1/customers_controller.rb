@@ -52,7 +52,8 @@ module Spree
         end
 
         def validate_params
-          true # add custom validator
+          result = LookupValidator.new.call(params.permit!.to_h.deep_symbolize_keys)
+          render json: { errors: result.format_errors }, status: 422 unless result.success?
         end
       end
     end
