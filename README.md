@@ -4,13 +4,14 @@
 ## Overview
 This exentension allows you to connect your  [Spree](https://github.com/spree/spree) store with [Gladly](https://www.gladly.com/) service.
 
-Supported Spree versions:
-- 3.0
-- 3.1
-- 3.7
-- 4.0
-- 4.1
-- 4.2
+Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
+
+**Table of contents:**
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Sandbox App](#setup-sandbox-environment)
+- [Testing](#testing)
 
 ## Installation
 
@@ -30,6 +31,8 @@ Next you should run the installer:
 
 
 ## Configuration
+
+### Spree Store side:
 
 After installation, you will find in `config/initializers/spree_gladly.rb` directory the below file:
 
@@ -62,6 +65,14 @@ Preferences like `signing_key` and `signing_threshold` you are able to set in yo
 In section: **Configurations**
 
 <img width="1436" alt="gladly_settings_admin_dashboard" src="https://user-images.githubusercontent.com/1455599/123083627-83c99400-d420-11eb-87ca-c1c5e20583d9.png">
+
+
+### Gladly Service side:
+
+Provide to your agent:
+- lookup endpoint (  `https://example-spree-store.com/api/v1/customers/lookup` ), where `https://example-spree-store.com` is **your** Spree store URL.
+- signing_key 
+
 
 ## Usage
 
@@ -216,16 +227,10 @@ bundle exec rake test_app
 bundle exec rake spec
 ````
 
-## Development
-
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/upsidelab/spree_gladly. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/spree_gladly/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/upsidelab/spree_gladly.
 
 ## Code of Conduct
 
-Everyone interacting in the SpreeGladly project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/spree_gladly/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the SpreeGladly project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/upsidelab/spree_gladly/blob/master/CODE_OF_CONDUCT.md).
