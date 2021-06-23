@@ -1,7 +1,7 @@
 # SpreeGladly
+[comment]: <> (add Travis status build badge when repo became public)
 
 ## Overview
-
 This exentension allows you to connect your  [Spree](https://github.com/spree/spree) store with [Gladly](https://www.gladly.com/) service.
 
 Supported Spree versions:
@@ -24,14 +24,14 @@ And then execute:
 
     $ bundle install
 
-Next you should run installer:
+Next you should run the installer:
 
     $ bundle exec rails generate spree_gladly:install
 
 
 ## Configuration
 
-After installation, you will find in `config/initializers` directory below file:
+After installation, you will find in `config/initializers/spree_gladly.rb` directory the below file:
 
 ````
 SpreeGladly.setup do |config|
@@ -51,12 +51,12 @@ end
 
 ````
 
-where you are able to setup preferences:
+where you are able to set the preferences:
 
-- **signing_key:** *add desc*
-- **signing_threshold:** *add desc*
-- **basic_lookup_presenter:** *add desc*
-- **detailed_lookup_presenter:** *add desc*
+- **signing_key:** *cryptographic key to sign every request to your lookup service*
+- **signing_threshold:** *time value to prevent replay attacks ( default: 0 )*
+- **basic_lookup_presenter:** *presenter which is responsible for basic lookup `results` payload ( default: Customer::BasicLookupPresenter )*
+- **detailed_lookup_presenter:** *presenter which is responsible for detailed lookup `results` payload ( default: Customer::DetailedLookupPresenter )*
 
 Preferences like `signing_key` and `signing_threshold` you are able to set in your Spree store admin dashboard.
 In section: **Configurations**
@@ -65,14 +65,14 @@ In section: **Configurations**
 
 ## Usage
 
-## Example payloads
+### Example payloads
 
 All fields in `response` payload are retrieved from [Spree::Order](https://guides.spreecommerce.org/developer/internals/orders.html)  and related models. 
 
 ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
 ### Basic Lookup
 
-**request:**
+**request payload:**
 ````
 {
   "lookupLevel":"BASIC",
@@ -86,7 +86,7 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
 }
 ````
 
-**response:**
+**response payload:**
 
 ````
 {
@@ -101,9 +101,9 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
 }
 ````
 
-## Detailed Lookup
+### Detailed Lookup
 
-**request:**
+**request payload:**
 
 ````
 {
@@ -119,7 +119,7 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
 }
 ````
 
-**response:**
+**response payload:**
 ````
 {
   "results":[
@@ -188,6 +188,34 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
 }
 ````
 
+## Setup sandbox environment
+
+1. Deploy Spree store on hosting provider ( *[heroku example](https://guides.spreecommerce.org/developer/deployment/heroku.html)* )
+2. Install `spree_gladly` gem
+3. Setup `signing_key` and provide to **Gladly** agent
+
+## Testing
+
+````
+bundle exec rake test_app
+bundle exec rake spec
+````
+
+For run specific test:
+````
+bundle exec rspec spec/controllers/spree/api/v1/customers_controller_spec.rb
+````
+
+Testing against specific Spree version:
+````
+export BUNDLE_GEMFILE=gemfiles/spree_3_7.gemfile
+
+bundle install
+
+bundle exec rake test_app
+bundle exec rake spec
+````
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -196,7 +224,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/spree_gladly. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/spree_gladly/blob/master/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/upsidelab/spree_gladly. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/spree_gladly/blob/master/CODE_OF_CONDUCT.md).
 
 ## Code of Conduct
 
