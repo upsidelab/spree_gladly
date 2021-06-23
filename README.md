@@ -9,6 +9,7 @@ Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
 **Table of contents:**
 - [Installation](#installation)
 - [Configuration](#configuration)
+- [Customization](#customization)
 - [Usage](#usage)
 - [Sandbox App](#setup-sandbox-environment)
 - [Testing](#testing)
@@ -61,8 +62,7 @@ where you are able to set the preferences:
 - **basic_lookup_presenter:** *presenter which is responsible for basic lookup `results` payload ( default: Customer::BasicLookupPresenter )*
 - **detailed_lookup_presenter:** *presenter which is responsible for detailed lookup `results` payload ( default: Customer::DetailedLookupPresenter )*
 
-Preferences like `signing_key` and `signing_threshold` you are able to set in your Spree store admin dashboard.
-In section: **Configurations**
+You can also set `signing_key` and `signing_threshold` via the admin dashboard in your Spree instance. To do that, open `Gladly Settings` in the `Configurations` section.
 
 <img width="1436" alt="gladly_settings_admin_dashboard" src="https://user-images.githubusercontent.com/1455599/123083627-83c99400-d420-11eb-87ca-c1c5e20583d9.png">
 
@@ -73,6 +73,74 @@ Provide to your agent:
 - lookup endpoint (  `https://example-spree-store.com/api/v1/customers/lookup` ), where `https://example-spree-store.com` is **your** Spree store URL.
 - signing_key 
 
+## Customization
+
+Within `spree_gladly` gem you are able to customize response payload i.e [detailed lookup response](#detailed-lookup) by replacing `Customer::DetailedLookupPresenter` in `config/initializers/spree_gladly.rb` initializer file with your own.
+
+Please consider below example:
+
+````
+class GladlyCustomersPresenter
+  include Spree::Core::Engine.routes.url_helpers # this is important if you want to use Spree routes
+
+  def initialize(resource:)
+    @resource = resource
+  end
+
+  def to_h
+    return {} unless resource.customer.present?
+
+    detailed_payload
+  end
+
+  private
+
+  attr_reader :resource
+
+  def detailed_payload
+    [
+      {
+        externalCustomerId: resource.customer&.id.to_s,
+        name: address&.full_name,
+        address: address.to_s&.gsub('<br/>', ' '),
+        emails: emails,
+        phones: phones,
+        orders: orders
+      }
+    ]
+  end
+  ...
+end
+````
+`config/initializers/spree_gladly.rb`
+
+````
+SpreeGladly.setup do |config|
+  ...
+  
+  config.basic_lookup_presenter = Customer::BasicLookupPresenter
+  config.detailed_lookup_presenter = GladlyCustomersPresenter
+
+  ...
+end
+````
+
+**!!! Important !!!**
+
+If you would like to resign from `to_h` or change `initialize(resource:)` method, you have to override  `Spree::Api::V1::CustomersController#serialize_collection` to do that, please follow by this [guide](https://guides.spreecommerce.org/developer/customization/logic.html#extending-controllers)
+
+`app/controllers/spree/api/v1/customers_controller.rb`
+
+````
+def serialize_collection(type:, collection:)
+  presenter = {
+    detailed: SpreeGladly::Config.detailed_lookup_presenter.new(resource: collection),
+    basic: SpreeGladly::Config.basic_lookup_presenter.new(resource: collection)
+  }[type]
+
+  { results: presenter.to_h }
+end
+````
 
 ## Usage
 
@@ -201,7 +269,7 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
 
 ## Setup sandbox environment
 
-1. Deploy Spree store on hosting provider ( *[heroku example](https://guides.spreecommerce.org/developer/deployment/heroku.html)* )
+1. Deploy Spree store on hosting provider ( [heroku example](https://guides.spreecommerce.org/developer/deployment/heroku.html) )
 2. Install `spree_gladly` gem
 3. Setup `signing_key` and provide to **Gladly** agent
 
