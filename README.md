@@ -61,7 +61,7 @@ where you are able to setup preferences:
 Preferences like `signing_key` and `signing_threshold` you are able to set in your Spree store admin dashboard.
 In section: **Configurations**
 
-*ADD SCREEN HERE*
+<img width="1436" alt="gladly_settings_admin_dashboard" src="https://user-images.githubusercontent.com/1455599/123083627-83c99400-d420-11eb-87ca-c1c5e20583d9.png">
 
 ## Usage
 
