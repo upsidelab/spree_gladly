@@ -7,11 +7,11 @@ This exentension allows you to connect your  [Spree](https://github.com/spree/sp
 Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
 
 **Table of contents:**
-1. [Installation](#installation)
-2. [Configuration](#configuration)
-3. [Usage](#usage)
-4. [Sandbox App](#setup-sandbox-environment)
-5. [Testing](#testing)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Sandbox App](#setup-sandbox-environment)
+- [Testing](#testing)
 
 ## Installation
 
@@ -31,6 +31,8 @@ Next you should run the installer:
 
 
 ## Configuration
+
+### Spree Store side:
 
 After installation, you will find in `config/initializers/spree_gladly.rb` directory the below file:
 
@@ -63,6 +65,14 @@ Preferences like `signing_key` and `signing_threshold` you are able to set in yo
 In section: **Configurations**
 
 <img width="1436" alt="gladly_settings_admin_dashboard" src="https://user-images.githubusercontent.com/1455599/123083627-83c99400-d420-11eb-87ca-c1c5e20583d9.png">
+
+
+### Gladly Service side:
+
+Provide to your agent:
+- lookup endpoint (  `https://example-spree-store.com/api/v1/customers/lookup` ), where `https://example-spree-store.com` is **your** Spree store URL.
+- signing_key 
+
 
 ## Usage
 
