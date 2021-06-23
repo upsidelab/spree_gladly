@@ -4,13 +4,14 @@
 ## Overview
 This exentension allows you to connect your  [Spree](https://github.com/spree/spree) store with [Gladly](https://www.gladly.com/) service.
 
-Supported Spree versions:
-- 3.0
-- 3.1
-- 3.7
-- 4.0
-- 4.1
-- 4.2
+Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
+
+**Table of contents:**
+1. [Installation](#installation)
+2. [Configuration](#configuration)
+3. [Usage](#usage)
+4. [Sandbox App](#setup-sandbox-environment)
+5. [Testing](#testing)
 
 ## Installation
 
