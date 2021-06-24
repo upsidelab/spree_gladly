@@ -70,7 +70,7 @@ module Customer
     end
 
     def order_url(transaction)
-      edit_admin_order_url(id: transaction.id, host: Rails.application.routes.default_url_options[:host])
+      edit_admin_order_url(id: transaction.number, host: Rails.application.routes.default_url_options[:host])
     end
 
     def lifetime_value
