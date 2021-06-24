@@ -33,7 +33,6 @@ module Spree
           { results: presenter.to_h }
         end
 
-        # add some general class where dev be able to configure out those
         def customer_lookup(type:)
           {
             detailed: Customer::DetailedLookup.new(params: params),
