@@ -45,7 +45,7 @@ module Customer
           orderStatus: transaction.state,
           orderNumber: transaction.number,
           products: transaction_products(transaction: transaction),
-          orderLink: edit_admin_order_path(transaction),
+          orderLink: order_url(transaction),
           note: transaction&.special_instructions.to_s,
           orderTotal: "#{transaction.total} #{transaction.currency}",
           createdAt: transaction.created_at
@@ -53,14 +53,15 @@ module Customer
       end
     end
 
+
     def transaction_products(transaction:)
       transaction.line_items.map do |item|
         {
           name: item.variant.name,
           status: item_status(item: item),
-          # sku: item.variant.sku,
+          sku: item.variant.sku,
           quantity: item.quantity.to_s,
-          # total: item.total,
+          total: item.total,
           unitPrice: "#{item.price} #{item.order.currency}",
           imageUrl: item_image_url(item: item),
           workOrderUrl: 'https://example.com', # framebridge
@@ -68,6 +69,11 @@ module Customer
         }
       end
     end
+
+    def order_url(transaction)
+      edit_admin_order_url(id: transaction.id, host: Rails.application.routes.default_url_options[:host])
+    end
+
 
     def lifetime_value
       value = resource.transactions.sum(&:total).to_s
