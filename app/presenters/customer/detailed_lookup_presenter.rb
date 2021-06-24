@@ -7,7 +7,7 @@ module Customer
     end
 
     def to_h
-      return {} unless resource.customer.present?
+      return [] unless resource.customer.present?
 
       detailed_payload
     end
