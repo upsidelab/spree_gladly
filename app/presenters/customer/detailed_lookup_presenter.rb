@@ -53,7 +53,6 @@ module Customer
       end
     end
 
-
     def transaction_products(transaction:)
       transaction.line_items.map do |item|
         {
@@ -73,7 +72,6 @@ module Customer
     def order_url(transaction)
       edit_admin_order_url(id: transaction.id, host: Rails.application.routes.default_url_options[:host])
     end
-
 
     def lifetime_value
       value = resource.transactions.sum(&:total).to_s

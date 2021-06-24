@@ -17,7 +17,7 @@ describe Customer::DetailedLookupPresenter, as: :presenter do
         # rubocop:disable Layout/LineLength
         expect(results.first.keys).to eq %i[externalCustomerId name address emails phones customAttributes transactions]
         expect(results.first[:transactions][0].keys).to eq %i[type orderStatus orderNumber products orderLink note orderTotal createdAt]
-        expect(results.first[:transactions][0][:products].first.keys).to eq %i[name status quantity unitPrice imageUrl workOrderUrl trackingUrl]
+        expect(results.first[:transactions][0][:products].first.keys).to eq %i[name status sku quantity total unitPrice imageUrl workOrderUrl trackingUrl]
         # rubocop:enable Layout/LineLength
       end
     end

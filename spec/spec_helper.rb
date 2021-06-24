@@ -32,6 +32,7 @@ RSpec.configure do |config|
   # current_path.should eql(spree.products_path)
   config.include Spree::TestingSupport::UrlHelpers
 
+  Rails.application.routes.default_url_options = { host: 'localhost:3000' }
   # == Requests support
   #
   # Adds convenient methods to request Spree's controllers
