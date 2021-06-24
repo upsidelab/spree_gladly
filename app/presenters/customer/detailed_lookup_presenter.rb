@@ -74,6 +74,8 @@ module Customer
     end
 
     def lifetime_value
+      return '0' if resource.transactions.empty?
+
       value = resource.transactions.sum(&:total).to_s
 
       "#{value} #{resource.transactions.first.currency}"
