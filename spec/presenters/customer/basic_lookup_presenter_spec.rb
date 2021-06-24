@@ -10,7 +10,7 @@ describe Customer::BasicLookupPresenter, as: :presenter do
       it 'return formatted results' do
         results = subject.to_h
         expect(results.size).to eq 4
-        expect(results.first.keys).to eq %i[externalCustomerId name email phone]
+        expect(results.first.keys).to eq %i[externalCustomerId name emails phones]
       end
     end
 

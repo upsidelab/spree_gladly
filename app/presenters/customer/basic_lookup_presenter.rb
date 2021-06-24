@@ -19,10 +19,27 @@ module Customer
         {
           externalCustomerId: user.id.to_s,
           name: address(user)&.full_name.to_s,
-          email: user.email,
-          phone: address(user)&.phone.to_s
+          emails: customer_emails(user),
+          phones: customer_phones(user)
         }
       end
+    end
+
+
+    def customer_emails(user)
+      [
+        {
+          original: user.email
+        }
+      ]
+    end
+
+    def customer_phones(user)
+      [
+        {
+          original: address(user)&.phone.to_s
+        }
+      ]
     end
 
     def address(user)
