@@ -19,7 +19,7 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
           'Gladly-Correlation-Id' => 'vXmSEPjVSWCaCMzvjufxZg',
           'X-B3-Traceid' => 'bd799210f8d549609a08ccef8ee7f166',
           'Gladly-Time' => '20190213T214016Z',
-          'Gladly-Authorization' => 'SigningAlgorithm=hmac-sha256, SignedHeaders=accept;content-type;gladly-correlation-id;gladly-time;x-b3-traceid, Signature=36dda3cf891e30523efd4670dbec8760a11140956953a01163643d908d3d888d'
+          'Gladly-Authorization' => 'SigningAlgorithm=hmac-sha256, SignedHeaders=accept;content-type;gladly-correlation-id;gladly-time;x-b3-traceid, Signature=bff5769eee99a6d1d12795b7d4866da43a508ac6c4ca014933f482ef44684d4a'
         }
       end
       # rubocop:enable Layout/LineLength
@@ -42,7 +42,7 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
         let(:signing_key) { 'test-apikey-1' }
         let(:signing_threshold) { 5.minutes }
 
-        xit 'return HTTP 200' do
+        it 'return HTTP 200' do
           expect(response.status).to eq 200
         end
       end
