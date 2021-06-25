@@ -20,7 +20,7 @@ module Customer
       return [] if name.nil?
 
       # rubocop:disable Layout/LineLength
-      scope.where("#{Spree::Address.table_name}.firstname || ' ' || #{Spree::Address.table_name}.lastname LIKE ?", "%#{query['name']}%")
+      scope.where("LOWER(#{Spree::Address.table_name}.firstname || ' ' || #{Spree::Address.table_name}.lastname) LIKE ?", "%#{query['name']&.downcase}%")
       # rubocop:enable Layout/LineLength
     end
 
