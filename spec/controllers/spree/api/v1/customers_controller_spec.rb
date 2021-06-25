@@ -108,9 +108,10 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
           results = JSON.parse(response.body)
 
           expect(results['results']&.size).to eq 1
-          expect(results['results'].first.keys.sort).to eq %w[externalCustomerId name emails phones].sort
+          expect(results['results'].first.keys.sort).to eq %w[externalCustomerId address name emails phones].sort
           expect(results['results'].first['externalCustomerId']).to eq user.id.to_s
           expect(results['results'].first['name']).to eq user.ship_address.full_name
+          expect(results['results'].first['address']).to eq user.ship_address.to_s&.gsub('<br/>', ' ')
           expect(results['results'].first['emails'][0]['original']).to eq user.email
           expect(results['results'].first['phones'][0]['original']).to eq user.ship_address.phone
         end
