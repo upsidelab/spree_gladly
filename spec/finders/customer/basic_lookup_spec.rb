@@ -122,17 +122,69 @@ describe Customer::BasicLookup do
 
     context 'searching by name' do
       let!(:customer) { create(:user_with_addreses) }
-      let(:params) do
-        {
-          query: {
-            name: customer.ship_address.full_name
+
+      context 'by first_name' do
+        let(:params) do
+          {
+            query: {
+              name: customer.ship_address.firstname
+            }
           }
-        }
+        end
+
+        it 'return single result' do
+          result = subject.execute
+          expect(result.size).to eq 1
+          expect(result.first.ship_address.full_name).to eq customer.ship_address.full_name
+        end
       end
-      it 'return single result' do
-        result = subject.execute
-        expect(result.size).to eq 1
-        expect(result.first.ship_address.full_name).to eq customer.ship_address.full_name
+
+      context 'by last_name' do
+        let(:params) do
+          {
+            query: {
+              name: customer.ship_address.lastname
+            }
+          }
+        end
+
+        it 'return single result' do
+          result = subject.execute
+          expect(result.size).to eq 1
+          expect(result.first.ship_address.full_name).to eq customer.ship_address.full_name
+        end
+      end
+
+      context 'uppercase name' do
+        let(:params) do
+          {
+            query: {
+              name: customer.ship_address.full_name.upcase
+            }
+          }
+        end
+
+        it 'return single result' do
+          result = subject.execute
+          expect(result.size).to eq 1
+          expect(result.first.ship_address.full_name).to eq customer.ship_address.full_name
+        end
+      end
+
+      context 'lowercase name' do
+        let(:params) do
+          {
+            query: {
+              name: customer.ship_address.full_name.downcase
+            }
+          }
+        end
+
+        it 'return single result' do
+          result = subject.execute
+          expect(result.size).to eq 1
+          expect(result.first.ship_address.full_name).to eq customer.ship_address.full_name
+        end
       end
     end
 
