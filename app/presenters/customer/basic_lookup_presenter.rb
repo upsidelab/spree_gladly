@@ -5,7 +5,7 @@ module Customer
     end
 
     def to_h
-      return {} if resource.empty?
+      return [] if resource.empty?
 
       basic_payload
     end

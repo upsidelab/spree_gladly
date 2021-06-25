@@ -20,7 +20,7 @@ describe Customer::BasicLookupPresenter, as: :presenter do
       it 'return empty hash' do
         result = subject.to_h
 
-        expect(result.is_a?(Hash)).to eq true
+        expect(result.is_a?(Array)).to eq true
         expect(result.empty?).to eq true
       end
     end
