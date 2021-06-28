@@ -47,6 +47,7 @@ module Customer
           type: 'ORDER',
           orderStatus: transaction.state,
           orderNumber: transaction.number,
+          guest: transaction_type(transaction),
           products: transaction_products(transaction: transaction),
           orderLink: order_url(transaction),
           note: transaction&.special_instructions.to_s,
@@ -70,6 +71,10 @@ module Customer
           trackingUrl: 'https://fedex.com' # framebridge
         }
       end
+    end
+
+    def transaction_type(order)
+      order.user_id.nil? ? Spree.t('yes') : Spree.t('no')
     end
 
     def customer_profile_url(customer)

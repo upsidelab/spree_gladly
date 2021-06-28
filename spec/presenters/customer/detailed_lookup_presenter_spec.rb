@@ -16,7 +16,7 @@ describe Customer::DetailedLookupPresenter, as: :presenter do
         # Todo add more specs after test against Gladly
         # rubocop:disable Layout/LineLength
         expect(results.first.keys).to match_array %i[externalCustomerId name address emails phones customAttributes transactions]
-        expect(results.first[:transactions][0].keys).to match_array %i[type orderStatus orderNumber products orderLink note orderTotal createdAt]
+        expect(results.first[:transactions][0].keys).to match_array %i[type orderStatus orderNumber guest products orderLink note orderTotal createdAt]
         expect(results.first[:transactions][0][:products].first.keys).to match_array %i[name status sku quantity total unitPrice imageUrl workOrderUrl trackingUrl]
         # rubocop:enable Layout/LineLength
       end
