@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Customer
   class BaseLookup
     def initialize(params:)
@@ -19,6 +21,22 @@ module Customer
       return param if param.is_a?(Array)
 
       param.split(',').map(&:strip)
+    end
+
+    def concat(*args)
+      if adapter =~ /mysql/i
+        "CONCAT(#{args.join(',')})"
+      else
+        args.join('||')
+      end
+    end
+
+    def adapter
+      if ActiveRecord::Base.respond_to?(:connection_db_config)
+        ActiveRecord::Base.connection_db_config.configuration_hash[:adapter]
+      else
+        ActiveRecord::Base.connection_config[:adapter]
+      end
     end
   end
 end
