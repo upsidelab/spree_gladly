@@ -35,6 +35,7 @@ module Customer
       {
         lifetimeValue: lifetime_value,
         totalOrderCount: resource.transactions.size.to_s,
+        guestOrderCount: calculate_guest_transactions.to_s,
         memberSince: pretty_time(resource.customer.created_at).to_s,
         customerLink: customer_profile_url(resource.customer),
         returnCount: 4.to_s # framebrigde
@@ -73,8 +74,12 @@ module Customer
       end
     end
 
+    def calculate_guest_transactions
+      resource.transactions.select { |item| item.user_id.nil? }.size
+    end
+
     def transaction_type(order)
-      order.user_id.nil? ? Spree.t('yes') : Spree.t('no')
+      order.user_id.nil? ? 'yes' : 'no'
     end
 
     def customer_profile_url(customer)
