@@ -3,12 +3,14 @@
 module Customer
   class BasicLookup < Customer::BaseLookup
     def execute
+      customers = registered_customers || guest_customers
+
       customers.uniq.sort
     end
 
     private
 
-    def customers
+    def registered_customers
       conditions = search_conditions
       return empty_scope unless conditions.present?
 
@@ -16,6 +18,14 @@ module Customer
       args = conditions.map(&:last)
 
       scope.where(template, *args)
+    end
+
+    def guest_customers
+      Spree::Order
+        .where(user_id: nil)
+        .where(email: emails) # should we search by each provided email ?
+        .order(created_at: :desc)
+        &.first
     end
 
     def search_conditions

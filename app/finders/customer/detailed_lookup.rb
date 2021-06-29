@@ -27,6 +27,7 @@ module Customer
     end
 
     def customer
+      # add searching by email, beacuse exteranlCustomerId can be id || email
       @customer ||= Spree.user_class.find(user_id)
     rescue ActiveRecord::RecordNotFound
       @customer ||= []
