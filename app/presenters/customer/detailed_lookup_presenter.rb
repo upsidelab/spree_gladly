@@ -93,9 +93,7 @@ module Customer
     def lifetime_value
       return '0' if resource.transactions.empty?
 
-      value = resource.transactions.sum(&:total).to_s
-
-      Spree::Money.new(value).to_html
+      Spree::Money.new(resource.transactions.sum(&:total)).to_html
     end
 
     def item_image_url(item:)
