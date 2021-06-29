@@ -52,7 +52,7 @@ module Customer
           products: transaction_products(transaction: transaction),
           orderLink: order_url(transaction),
           note: transaction&.special_instructions.to_s,
-          orderTotal: "#{transaction.total} #{transaction.currency}",
+          orderTotal: Spree::Money.new(transaction.total).to_html,
           createdAt: transaction.created_at
         }
       end
@@ -65,8 +65,8 @@ module Customer
           status: item_status(item: item),
           sku: item.variant.sku,
           quantity: item.quantity.to_s,
-          total: item.total,
-          unitPrice: "#{item.price} #{item.order.currency}",
+          total: Spree::Money.new(item.total).to_html,
+          unitPrice: Spree::Money.new(item.price).to_html,
           imageUrl: item_image_url(item: item),
           workOrderUrl: 'https://example.com', # framebridge
           trackingUrl: 'https://fedex.com' # framebridge
@@ -93,9 +93,7 @@ module Customer
     def lifetime_value
       return '0' if resource.transactions.empty?
 
-      value = resource.transactions.sum(&:total).to_s
-
-      "#{value} #{resource.transactions.first.currency}"
+      Spree::Money.new(resource.transactions.sum(&:total)).to_html
     end
 
     def item_image_url(item:)

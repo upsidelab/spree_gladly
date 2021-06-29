@@ -117,12 +117,12 @@ end
 
 ```ruby
 SpreeGladly.setup do |config|
-  ...
+  # ...
   
   config.basic_lookup_presenter = Customer::BasicLookupPresenter
   config.detailed_lookup_presenter = GladlyCustomersPresenter
 
-  ...
+  # ...
 end
 ```
 
@@ -218,8 +218,8 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
         }
       ],
       "customAttributes":{
-        "lifetimeValue":"142.97 USD",
-        "totalOrderCount":"2",
+        "lifetimeValue":"$142.97",
+        "totalOrderCount":"2"
       },
       "transactions":[
         {
@@ -232,14 +232,14 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
               "status":"fulfilled",
               "sku": "SKU-1",
               "quantity":"1",
-              "unitPrice":"78.99 USD",
-              "total": "78.99 USD"
-              "imageUrl":"",
+              "unitPrice":"$78.99",
+              "total": "$78.99",
+              "imageUrl":""
             }
           ],
           "orderLink":"https://example-spree-store.com/admin/orders/R185194841/edit",
           "note":"",
-          "orderTotal":"83.99 USD",
+          "orderTotal":"$83.99",
           "createdAt":"2021-06-21T10:29:43.881Z"
         },
         {
@@ -252,14 +252,14 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
               "status":"fulfilled",
               "sku": "SKU-2",
               "quantity":"2",
-              "unitPrice":"26.99 USD",
-              "total": "53.98 USD"
-              "imageUrl":"https://example-spree-store.com/images/sample_picture.jpg",
+              "unitPrice":"$26.99",
+              "total": "$53.98",
+              "imageUrl":"https://example-spree-store.com/images/sample_picture.jpg"
             }
           ],
           "orderLink":"https://example-spree-store.com/admin/orders/R461455233/edit",
           "note":"",
-          "orderTotal":"58.98 USD",
+          "orderTotal":"$58.98",
           "createdAt":"2021-06-21T10:34:10.262Z"
         }
       ]
