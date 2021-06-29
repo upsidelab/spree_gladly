@@ -37,7 +37,7 @@ Next you should run the installer:
 
 After installation, you will find in `config/initializers/spree_gladly.rb` directory the below file:
 
-````
+```ruby
 SpreeGladly.setup do |config|
   # The key used to validate the Gladly lookup request signature.
   # We recommend using a secure random string of length over 32.
@@ -53,7 +53,7 @@ SpreeGladly.setup do |config|
   # config.signing_threshold = 5.minutes
 end
 
-````
+```
 
 where you are able to set the preferences:
 
@@ -79,7 +79,7 @@ Within `spree_gladly` gem you are able to customize response payload i.e [detail
 
 Please consider below example:
 
-````
+```ruby
 class GladlyCustomersPresenter
   include Spree::Core::Engine.routes.url_helpers # this is important if you want to use Spree routes
 
@@ -111,10 +111,11 @@ class GladlyCustomersPresenter
   end
   ...
 end
-````
+```
+
 `config/initializers/spree_gladly.rb`
 
-````
+```ruby
 SpreeGladly.setup do |config|
   ...
   
@@ -123,7 +124,7 @@ SpreeGladly.setup do |config|
 
   ...
 end
-````
+```
 
 **!!! Important !!!**
 
@@ -131,7 +132,7 @@ If you would like to resign from `to_h` or change `initialize(resource:)` method
 
 `app/controllers/spree/api/v1/customers_controller.rb`
 
-````
+```ruby
 def serialize_collection(type:, collection:)
   presenter = {
     detailed: SpreeGladly::Config.detailed_lookup_presenter.new(resource: collection),
@@ -140,7 +141,7 @@ def serialize_collection(type:, collection:)
 
   { results: presenter.to_h }
 end
-````
+```
 
 ## Usage
 
@@ -152,7 +153,7 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
 ### Basic Lookup
 
 **request payload:**
-````
+```json
 {
   "lookupLevel":"BASIC",
   "uniqueMatchRequired":false,
@@ -163,11 +164,11 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
     ]
   }
 }
-````
+```
 
 **response payload:**
 
-````
+```json
 {
   "results":[
     {
@@ -178,13 +179,13 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
     }
   ]
 }
-````
+```
 
 ### Detailed Lookup
 
 **request payload:**
 
-````
+```json
 {
   "lookupLevel":"DETAILED",
   "uniqueMatchRequired":true,
@@ -196,10 +197,10 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
     "externalCustomerId":"4"
   }
 }
-````
+```
 
 **response payload:**
-````
+```json
 {
   "results":[
     {
@@ -265,7 +266,7 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
     }
   ]
 }
-````
+```
 
 ## Setup sandbox environment
 
