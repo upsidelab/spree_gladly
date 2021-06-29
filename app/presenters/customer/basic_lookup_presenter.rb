@@ -18,6 +18,7 @@ module Customer
       resource.map do |user|
         {
           externalCustomerId: user.id.to_s,
+          address: address(user).to_s&.gsub('<br/>', ' '),
           name: address(user)&.full_name.to_s,
           emails: customer_emails(user),
           phones: customer_phones(user)
@@ -43,7 +44,7 @@ module Customer
     end
 
     def address(user)
-      @address ||= user.ship_address || user.bill_address
+      user.ship_address
     end
   end
 end

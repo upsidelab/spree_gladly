@@ -1,6 +1,7 @@
 module Customer
   class DetailedLookupPresenter
     include Spree::Core::Engine.routes.url_helpers
+    include Spree::BaseHelper
 
     def initialize(resource:)
       @resource = resource
@@ -34,6 +35,9 @@ module Customer
       {
         lifetimeValue: lifetime_value,
         totalOrderCount: resource.transactions.size.to_s,
+        guestOrderCount: calculate_guest_transactions.to_s,
+        memberSince: pretty_time(resource.customer.created_at).to_s,
+        customerLink: customer_profile_url(resource.customer),
         returnCount: 4.to_s # framebrigde
       }
     end
@@ -44,6 +48,7 @@ module Customer
           type: 'ORDER',
           orderStatus: transaction.state,
           orderNumber: transaction.number,
+          guest: transaction_type(transaction),
           products: transaction_products(transaction: transaction),
           orderLink: order_url(transaction),
           note: transaction&.special_instructions.to_s,
@@ -67,6 +72,18 @@ module Customer
           trackingUrl: 'https://fedex.com' # framebridge
         }
       end
+    end
+
+    def calculate_guest_transactions
+      resource.transactions.select { |item| item.user_id.nil? }.size
+    end
+
+    def transaction_type(order)
+      order.user_id.nil? ? 'yes' : 'no'
+    end
+
+    def customer_profile_url(customer)
+      edit_admin_user_url(id: customer.id, host: Rails.application.routes.default_url_options[:host])
     end
 
     def order_url(transaction)
@@ -108,7 +125,7 @@ module Customer
     end
 
     def address
-      @address ||= resource.customer.ship_address || resource.bill_address
+      @address ||= resource.customer.ship_address
     end
   end
 end
