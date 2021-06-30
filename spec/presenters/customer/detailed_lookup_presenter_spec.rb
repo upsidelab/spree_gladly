@@ -17,7 +17,7 @@ describe Customer::DetailedLookupPresenter, as: :presenter do
         # rubocop:disable Layout/LineLength
         expect(results.first.keys).to match_array %i[externalCustomerId name address emails phones customAttributes transactions]
         expect(results.first[:transactions][0].keys).to match_array %i[type orderStatus orderNumber guest products orderLink note orderTotal createdAt]
-        expect(results.first[:transactions][0][:products].first.keys).to match_array %i[name status sku quantity total unitPrice imageUrl workOrderUrl trackingUrl]
+        expect(results.first[:transactions][0][:products].first.keys).to match_array %i[name status sku quantity total unitPrice imageUrl]
         # rubocop:enable Layout/LineLength
       end
     end
