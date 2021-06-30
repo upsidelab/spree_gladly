@@ -219,7 +219,10 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
       ],
       "customAttributes":{
         "lifetimeValue":"$142.97",
-        "totalOrderCount":"2"
+        "totalOrderCount":"2",
+        "guestOrderCount": "0",
+        "memberSince" : "May 17, 2021 10:18 AM UTC",
+        "customerLink": "https://example-spree-store.com/admin/users/4/edit"
       },
       "transactions":[
         {
