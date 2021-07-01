@@ -37,8 +37,7 @@ module Customer
         totalOrderCount: resource.transactions.size.to_s,
         guestOrderCount: calculate_guest_transactions.to_s,
         memberSince: pretty_time(resource.customer.created_at).to_s,
-        customerLink: customer_profile_url(resource.customer),
-        returnCount: 4.to_s # framebrigde
+        customerLink: customer_profile_url(resource.customer)
       }
     end
 
@@ -67,9 +66,7 @@ module Customer
           quantity: item.quantity.to_s,
           total: Spree::Money.new(item.total).to_html,
           unitPrice: Spree::Money.new(item.price).to_html,
-          imageUrl: item_image_url(item: item),
-          workOrderUrl: 'https://example.com', # framebridge
-          trackingUrl: 'https://fedex.com' # framebridge
+          imageUrl: item_image_url(item: item)
         }
       end
     end
