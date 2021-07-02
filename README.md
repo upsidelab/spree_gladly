@@ -2,17 +2,32 @@
 [comment]: <> (add Travis status build badge when repo became public)
 
 ## Overview
-This exentension allows you to connect your  [Spree](https://github.com/spree/spree) store with [Gladly](https://www.gladly.com/) service.
+This exentension allows you to connect your  [Spree](https://github.com/spree/spree) store with [Gladly](https://www.gladly.com/) service. It allows Gladly agents to see basic information about Spree customers and their orders.
+
+It adhers to the specification of a Gladly Lookup adapter as described [here](https://developer.gladly.com/tutorials/lookup).
 
 Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
 
 **Table of contents:**
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Customization](#customization)
-- [Usage](#usage)
-- [Sandbox App](#setup-sandbox-environment)
-- [Testing](#testing)
+- [SpreeGladly](#spreegladly)
+  - [Overview](#overview)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+    - [Spree Store side:](#spree-store-side)
+    - [Gladly Service side:](#gladly-service-side)
+  - [Customization](#customization)
+  - [Usage](#usage)
+    - [Default payloads](#default-payloads)
+    - [Basic Lookup](#basic-lookup)
+      - [Manual Search Request](#manual-search-request)
+      - [Automatic Search Request](#automatic-search-request)
+      - [Basic Lookup Response](#basic-lookup-response)
+    - [Detailed Lookup](#detailed-lookup)
+    - [How search works?](#how-search-works)
+  - [Setup sandbox environment](#setup-sandbox-environment)
+  - [Testing](#testing)
+  - [Contributing](#contributing)
+  - [Code of Conduct](#code-of-conduct)
 
 ## Installation
 
@@ -145,28 +160,55 @@ end
 
 ## Usage
 
-### Example payloads
+The below description will assume that the reader has familiarized themselves with [Gladly Lookup Adapter tutorial](https://developer.gladly.com/tutorials/lookup).
+
+### Default payloads
 
 All fields in `response` payload are retrieved from [Spree::Order](https://guides.spreecommerce.org/developer/internals/orders.html)  and related models. 
 
 ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
+
 ### Basic Lookup
 
-**request payload:**
+The aim of basic search is to allow the agent to find potential customers that match the information that they have at hand, e.g. email, phone number, name.
+As mentioned in the [Gladly tutorial](https://developer.gladly.com/tutorials/lookup) the initial search can be triggered automatically or by agent and because of that the Spree adapter accepts two different formats of requests.
+
+#### Manual Search Request
+OOTB the extension allows searching by email, phone number and name of the customer. Additional fields can be added.
+
 ```json
 {
   "lookupLevel":"BASIC",
   "uniqueMatchRequired":false,
   "query":{
-    "emails":"customer@example.com",
-    "phones":[
-      "666-666-666"
-    ]
+    "email":"customer@example.com",
+    "phone":"666-666-666",
+    "name": "Elka Melka",
   }
 }
 ```
 
-**response payload:**
+#### Automatic Search Request
+The request is automatically populated with data available in customer's profile. OOTB the extension searches for customers based on the name, emails and numbers (ignoring the rest of the fields).
+
+```json
+{
+  "lookupLevel":"BASIC",
+  "uniqueMatchRequired":false,
+  "query":
+    {
+      "emails":["customer@example.com", "another@email.com"],
+      "phones": ["666-666-666", "123-435-235"],
+      "name": "Elka Melka",
+      "lifetimeValue": "$500"
+    }
+}
+```
+
+#### Basic Lookup Response
+
+By default the the fields listed below are returned. Fields can be hidden via Gladly UI or the integration
+can be extended to return more/different fields. The format of the response has to match the [Gladly Customer schema](https://developer.gladly.com/rest/#operation/createCustomer)
 
 ```json
 {
@@ -174,14 +216,17 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
     {
       "externalCustomerId":"1",
       "name":"James Bond",
-      "email":"customer@example.com",
-      "phone":"666-666-666"
+      "emails": [{"original": "customer@example.com"}],
+      "phones": [{"original": "666-666-666"}],
+      "address": "22 Apple Lane, 9999 San Francisco"
     }
   ]
 }
 ```
 
 ### Detailed Lookup
+
+Detailed lookup is used to update the linked customer with detailed data. This means that detailed lookup expects only one result returned. Gladly will send in the request all the customer's information except of transactions. However, only the externalCustomerId and email address are used to find the correct customer in Spree.
 
 **request payload:**
 
@@ -190,7 +235,9 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
   "lookupLevel":"DETAILED",
   "uniqueMatchRequired":true,
   "query":{
-    "emails":"customer@example.com",
+    "name": "Some name",
+    "totalOrderCount": "4",
+    "emails":[ "customer@example.com", "another@email.com"],
     "phones":[
       "666-666-666"
     ],
@@ -200,6 +247,8 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
 ```
 
 **response payload:**
+The following payload shows all the fields that are returned from Spree. You can ask your Gladly representative to ammend which fields are visible in the order card.
+
 ```json
 {
   "results":[
@@ -229,6 +278,10 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
           "type":"ORDER",
           "orderStatus":"complete",
           "orderNumber":"R185194841",
+          "orderLink":"https://example-spree-store.com/admin/orders/R185194841/edit",
+          "note":"",
+          "orderTotal":"$83.99",
+          "createdAt":"2021-06-21T10:29:43.881Z",
           "products":[
             {
               "name":"Flared Midi Skirt",
@@ -239,16 +292,16 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
               "total": "$78.99",
               "imageUrl":""
             }
-          ],
-          "orderLink":"https://example-spree-store.com/admin/orders/R185194841/edit",
-          "note":"",
-          "orderTotal":"$83.99",
-          "createdAt":"2021-06-21T10:29:43.881Z"
+          ]
         },
         {
           "type":"ORDER",
           "orderStatus":"complete",
           "orderNumber":"R461455233",
+          "orderLink":"https://example-spree-store.com/admin/orders/R461455233/edit",
+          "note":"Some note about the order",
+          "orderTotal":"$58.98",
+          "createdAt":"2021-06-21T10:34:10.262Z",
           "products":[
             {
               "name":"3 4 Sleeve T Shirt",
@@ -259,17 +312,16 @@ ENDPOINT: `https://example-spree-store.com/api/v1/customers/lookup`
               "total": "$53.98",
               "imageUrl":"https://example-spree-store.com/images/sample_picture.jpg"
             }
-          ],
-          "orderLink":"https://example-spree-store.com/admin/orders/R461455233/edit",
-          "note":"",
-          "orderTotal":"$58.98",
-          "createdAt":"2021-06-21T10:34:10.262Z"
+          ]
         }
       ]
     }
   ]
 }
 ```
+
+### How search works?
+
 
 ## Setup sandbox environment
 
