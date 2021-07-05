@@ -338,13 +338,13 @@ Below table explains the returned fields.
 
 | Gladly customer field | Spree field                                                                               |
 | --------------------- | ----------------------------------------------------------------------------------------- |
-| name                  | Spree::Account.relationships.default_billing_address.(firstname + lastname)               |
-| externalCustomerId    | Spree::Account.email                                                                      |
-| emails                | [ Spree::Account.attributes.email ]                                                       |
+| name                  | Spree::User.relationships.default_billing_address.full_name               |
+| externalCustomerId    | Spree::User.email                                                                      |
+| emails                | [ Spree::User.attributes.email ]                                                       |
 |                       |
-| spreeId               | Spree::Account.id                                                                         |
-| phones                | [ Spree::Account.relationships.default_billing_address.phone ]                            |
-| address               | Spree::Account.relationships.default_billing_address.(address1, address2, city,  zipcode) |
+| spreeId               | Spree::User.id                                                                         |
+| phones                | [ Spree::User.relationships.default_billing_address.phone ]                            |
+| address               | Spree::User.relationships.default_billing_address.(address1, address2, city,  zipcode) |
 
 **For guest customers**
 
@@ -352,7 +352,7 @@ In below table Spree::Order means the latest (`Spree::Order.completed_at`) order
 
 | Gladly field       | Spree                                                            |
 | ------------------ | ---------------------------------------------------------------- |
-| name               | Spree::Order.billing_address.(firstname + lastname)              |
+| name               | Spree::Order.billing_address.full_name             |
 | externalCustomerId | Spree::Order.email                                               |
 | email              | Spree::Order.email                                               |
 | spreeId            | -                                                                |
@@ -369,12 +369,12 @@ Below tables list the fields returned from Spree.
 
 | Gladly field                     | Spree field                                                                               |
 | -------------------------------- | ----------------------------------------------------------------------------------------- |
-| name                             | Spree::Account.relationships.default_billing_address.(firstname + lastname)               |
-| externalCustomerId               | Spree::Account.email                                                                      |
-| emails                           | [ Spree::Account.attributes.email ]                                                       |
-| phones                           | [ Spree::Account.relationships.default_billing_address.phone ]                            |
-| address                          | Spree::Account.relationships.default_billing_address.(address1 , address2, city, zipcode) |
-| customAttributes.spreeId         | Spree::Account.id                                                                         |
+| name                             | Spree::User.relationships.default_billing_address.full_name               |
+| externalCustomerId               | Spree::User.email                                                                      |
+| emails                           | [ Spree::User.attributes.email ]                                                       |
+| phones                           | [ Spree::User.relationships.default_billing_address.phone ]                            |
+| address                          | Spree::User.relationships.default_billing_address.(address1 , address2, city, zipcode) |
+| customAttributes.spreeId         | Spree::User.id                                                                         |
 | customAttributes.totalOrderCount | total of Spree::Order(s) that match the `externalCustomerId`                              |
 | customAttributes.guestOrderCount | customAttributes.totalOrderCount - Spree::Account.attributes.completed_orders             |
 | customAttributes.memberSince     | ?                                                                                         |
