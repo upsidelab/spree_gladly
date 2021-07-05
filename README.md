@@ -184,7 +184,7 @@ OOTB the extension allows searching by email, phone number and name of the custo
 ```
 
 #### Automatic Search Request
-The request is automatically populated with data available in customer's profile. OOTB the extension searches for customers based on the name, emails and numbers (ignoring the rest of the fields).
+The request is automatically populated with data available in customer's profile. OOTB the extension searches for customers based on the name, emails and phone numbers (ignoring the rest of the fields).
 
 ```json
 {
