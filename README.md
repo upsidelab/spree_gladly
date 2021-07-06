@@ -210,9 +210,11 @@ Note: we use the email address as the `externalCustomerId` and not the id used b
 {
   "results":[
     {
-      "externalCustomerId":"customer@example.com",
-      "spreeId": 1,
-      "name":"James Bond",
+      "externalCustomerId": "customer@example.com",
+      "customAttributes": {
+        "spreeId": 1
+      },
+      "name": "James Bond",
       "emails": [{"original": "customer@example.com"}],
       "phones": [{"original": "666-666-666"}],
       "address": "22 Apple Lane, 9999 San Francisco"
@@ -239,7 +241,9 @@ Detailed lookup is used to update the linked customer with detailed data. This m
       "666-666-666"
     ],
     "externalCustomerId":"customer@example.com",
-    "spreeId": 1
+    "customAttributes": {
+      "spreeId": 1
+    }
   }
 }
 ```
@@ -251,7 +255,7 @@ The following payload shows all the fields that are returned from Spree. You can
 {
   "results":[
     {
-      "externalCustomerId":"4",
+      "externalCustomerId": "customer@example.com",
       "name":"James Bond",
       "address":"Baker Street 007 London, AK 00021 United Kingdom",
       "emails":[
@@ -265,6 +269,7 @@ The following payload shows all the fields that are returned from Spree. You can
         }
       ],
       "customAttributes":{
+        "spreeId": "4",
         "lifetimeValue":"$142.97",
         "totalOrderCount":"2",
         "guestOrderCount": "0",
@@ -338,15 +343,15 @@ Below table explains the returned fields.
 
 **For registered customers:**
 
-| Gladly customer field | Spree field                                                                            |
-| --------------------- | -------------------------------------------------------------------------------------- |
-| name                  | Spree::User.relationships.default_billing_address.full_name                            |
-| externalCustomerId    | Spree::User.email                                                                      |
-| emails                | Spree::User.attributes.email                                                           |
-|                       |
-| spreeId               | Spree::User.id                                                                         |
-| phones                | Spree::User.relationships.default_billing_address.phone                                |
-| address               | Spree::User.relationships.default_billing_address.(address1, address2, city,  zipcode) |
+| Gladly customer field    | Spree field                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------------- |
+| name                     | Spree::User.relationships.default_billing_address.full_name                            |
+| externalCustomerId       | Spree::User.email                                                                      |
+| emails                   | Spree::User.attributes.email                                                           |
+|                          |
+| customAttributes.spreeId | Spree::User.id                                                                         |
+| phones                   | Spree::User.relationships.default_billing_address.phone                                |
+| address                  | Spree::User.relationships.default_billing_address.(address1, address2, city,  zipcode) |
 
 **For guest customers**
 
@@ -357,7 +362,6 @@ In the below table Spree::Order means the latest (`Spree::Order.completed_at`) o
 | name               | Spree::Order.billing_address.full_name                           |
 | externalCustomerId | Spree::Order.email                                               |
 | emails             | Spree::Order.email                                               |
-| spreeId            | -                                                                |
 | phones             | Spree:Order.billing_address.phone                                |
 | address            | Spree::Order.billing_address.(address1, address2, city, zipcode) |
 
