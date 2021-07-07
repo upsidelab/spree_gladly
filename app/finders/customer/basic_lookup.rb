@@ -3,8 +3,10 @@
 module Customer
   class BasicLookup < Customer::BaseLookup
     def execute
-      # IMPORTANT remove from guest_customers_by_email registered_customer results
-      OpenStruct.new(guest_customers: guest_customers_by_email.uniq.sort, registered_customers: registered_customers.uniq.sort )
+      OpenStruct.new(
+        guest_customers: guest_customers_by_email(registered_customers.pluck(:email)),
+        registered_customers: registered_customers.uniq.sort
+      )
     end
 
     private
@@ -16,13 +18,15 @@ module Customer
       template = conditions.map(&:first).join(' OR ')
       args = conditions.map(&:last)
 
-      scope.where(template, *args)
+      @registered_customers ||= scope.where(template, *args)
     end
 
-    def guest_customers_by_email
+    def guest_customers_by_email(excluded_emails)
+      guest_emails = emails - excluded_emails
+
       Spree::Order
         .where(user_id: nil)
-        .where(email: emails) # should we search by each provided email ?
+        .where(email: guest_emails)
         .order(created_at: :desc)
     end
 
