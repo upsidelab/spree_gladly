@@ -2,22 +2,30 @@ module Customer
   class BasicLookupPresenter
     def initialize(resource:)
       @resource = resource
+      @registered_customers = resource.registered_customers
+      @guest_customers = resource.guest_customers
     end
 
     def to_h
-      return [] if resource.empty?
+      return [] if guest_customers.empty? && registered_customers.empty?
 
-      basic_payload
+      # todo split presenteres for: guest and registered
+      guests = Customer::GuestPresenter.new(resource: guest_customers).to_h
+      registered = basic_payload
+
+      registered.concat(guests)
     end
 
     private
 
-    attr_reader :resource
+    attr_reader :resource, :registered_customers, :guest_customers
 
     def basic_payload
-      resource.map do |user|
+      return [] if registered_customers.empty?
+
+      registered_customers.map do |user|
         {
-          externalCustomerId: user.id.to_s,
+          externalCustomerId: user.email,
           address: address(user).to_s&.gsub('<br/>', ' '),
           name: address(user)&.full_name.to_s,
           emails: customer_emails(user),

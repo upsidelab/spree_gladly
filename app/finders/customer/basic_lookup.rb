@@ -3,9 +3,8 @@
 module Customer
   class BasicLookup < Customer::BaseLookup
     def execute
-      customers = registered_customers || guest_customers
-
-      customers.uniq.sort
+      # IMPORTANT remove from guest_customers_by_email registered_customer results
+      OpenStruct.new(guest_customers: guest_customers_by_email.uniq.sort, registered_customers: registered_customers.uniq.sort )
     end
 
     private
@@ -20,12 +19,11 @@ module Customer
       scope.where(template, *args)
     end
 
-    def guest_customers
+    def guest_customers_by_email
       Spree::Order
         .where(user_id: nil)
         .where(email: emails) # should we search by each provided email ?
         .order(created_at: :desc)
-        &.first
     end
 
     def search_conditions
