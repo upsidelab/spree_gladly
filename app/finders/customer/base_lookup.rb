@@ -17,6 +17,14 @@ module Customer
 
     attr_reader :params, :query, :emails, :phones, :name, :external_customer_id, :spree_id
 
+    def customer
+      @customer ||= Spree.user_class.where('id = ? OR email = ?', spree_id.to_i, external_customer_id).take
+    end
+
+    def guest_customer?
+      customer.present?
+    end
+
     def normalize_param(param:)
       return [] if param.nil?
       return param if param.is_a?(Array)
