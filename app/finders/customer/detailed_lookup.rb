@@ -3,38 +3,52 @@
 module Customer
   class DetailedLookup < Customer::BaseLookup
     def execute
-      OpenStruct.new(customer: customer, transactions: transactions)
+      return registered_customer_result if registered_customer.present?
+      return guest_customer_result if guest_customer.present?
+
+      OpenStruct.new(customer: [], transactions: [])
     end
 
     private
 
-    def transactions
-      return [] unless customer.present?
-
-      orders
+    def guest_customer_result
+      OpenStruct.new(customer: guest_customer, transactions: guest_orders, guest: true)
     end
 
-    def orders
-      t = Spree::Order.table_name
+    def registered_customer_result
+      OpenStruct.new(customer: registered_customer, transactions: registered_orders, guest: false)
+    end
 
-      customer_orders = "(#{t}.user_id = ?)"
-      guest_orders = "(#{t}.user_id IS NULL AND #{t}.email = ?)"
-
+    def guest_orders
       Spree::Order
         .includes(:line_items)
-        .where("#{customer_orders} OR #{guest_orders}", user_id, customer.email)
+        .where("(#{order_table}.user_id IS NULL AND #{order_table}.email = ?)", guest_customer.email)
         .to_a
     end
 
-    def customer
-      # add searching by email, beacuse exteranlCustomerId can be id || email
-      @customer ||= Spree.user_class.find(user_id)
-    rescue ActiveRecord::RecordNotFound
-      @customer ||= []
+    def registered_orders
+      customer_orders = "(#{order_table}.user_id = ?)"
+      guest_orders = "(#{order_table}.user_id IS NULL AND #{order_table}.email = ?)"
+
+      Spree::Order
+        .includes(:line_items)
+        .where("#{customer_orders} OR #{guest_orders}", registered_customer.id, registered_customer.email)
+        .to_a
     end
 
-    def user_id
-      external_customer_id.to_i
+    def registered_customer
+      @registered_customer ||= Spree.user_class.where('id = ? OR email = ?', spree_id.to_i, external_customer_id).take
+    end
+
+    def guest_customer
+      @guest_customer ||= Spree::Order
+                            .where(email: external_customer_id)
+                            .order(created_at: :desc)
+                            .first
+    end
+
+    def order_table
+      Spree::Order.table_name
     end
   end
 end

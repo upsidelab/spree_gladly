@@ -10,11 +10,12 @@ module Customer
       @phones = normalize_param(param: query[:phones])
       @name = query[:name]
       @external_customer_id = query[:externalCustomerId]
+      @spree_id = query[:spreeId]
     end
 
     private
 
-    attr_reader :params, :query, :emails, :phones, :name, :external_customer_id
+    attr_reader :params, :query, :emails, :phones, :name, :external_customer_id, :spree_id
 
     def normalize_param(param:)
       return [] if param.nil?
