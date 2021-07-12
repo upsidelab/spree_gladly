@@ -9,6 +9,8 @@ module Customer
       end
 
       def execute
+        return [] if emails.empty?
+
         guest_customers
       end
 

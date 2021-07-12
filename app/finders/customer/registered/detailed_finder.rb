@@ -8,6 +8,8 @@ module Customer
       end
 
       def execute
+        return empty_result if customer.nil?
+
         OpenStruct.new(customer: customer, transactions: transactions, guest: false)
       end
 
@@ -23,6 +25,10 @@ module Customer
           .includes(:line_items)
           .where("#{customer_orders} OR #{guest_orders}", customer.id, customer.email)
           .to_a
+      end
+
+      def empty_result
+        OpenStruct.new(customer: Array.new, transactions: Array.new, guest: false)
       end
 
       def order_table

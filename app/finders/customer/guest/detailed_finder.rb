@@ -16,7 +16,7 @@ module Customer
       attr_reader :email
 
       def customer
-        transactions.first
+        transactions.first || Array.new
       end
 
       def transactions
