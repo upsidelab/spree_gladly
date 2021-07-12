@@ -20,7 +20,6 @@ module Customer
 
       attr_reader :resource
 
-
       def detailed_payload
         [
           {

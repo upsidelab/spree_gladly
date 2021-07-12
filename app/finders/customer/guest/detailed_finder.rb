@@ -20,10 +20,10 @@ module Customer
       end
 
       def transactions
-        Spree::Order
-          .includes(:line_items)
-          .where("(#{order_table}.user_id IS NULL AND #{order_table}.email = ?)", email)
-          .to_a
+        @transactions ||= Spree::Order
+                            .includes(:line_items)
+                            .where("(#{order_table}.user_id IS NULL AND #{order_table}.email = ?)", email)
+                            .to_a
       end
 
       def order_table

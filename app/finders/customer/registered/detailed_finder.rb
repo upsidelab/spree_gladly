@@ -1,9 +1,10 @@
 # frozen_string_literal: true
+
 module Customer
   module Registered
     class DetailedFinder
       def initialize(customer:)
-        @customer_id = customer
+        @customer = customer
       end
 
       def execute

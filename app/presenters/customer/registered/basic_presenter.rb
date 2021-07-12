@@ -30,7 +30,6 @@ module Customer
         end
       end
 
-
       def customer_emails(user)
         [
           {

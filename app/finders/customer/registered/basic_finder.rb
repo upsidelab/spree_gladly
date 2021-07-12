@@ -24,7 +24,7 @@ module Customer
         template = conditions.map(&:first).join(' OR ')
         args = conditions.map(&:last)
 
-        @registered_customers ||= scope.where(template, *args)
+        scope.where(template, *args)
       end
 
       def search_conditions
