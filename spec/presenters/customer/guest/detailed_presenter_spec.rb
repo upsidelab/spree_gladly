@@ -31,9 +31,7 @@ describe Customer::Guest::DetailedPresenter, as: :presenter do
       it 'return formatted results' do
         results = subject.to_h
         expect(results.size).to eq 1
-        # rubocop:disable Layout/LineLength
         expect(results.first.keys).to match_array %i[externalCustomerId customAttributes transactions]
-        # rubocop:enable Layout/LineLength
         expect(results.first[:transactions]).to be_empty
       end
     end

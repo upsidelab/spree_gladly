@@ -6,7 +6,6 @@ describe Customer::Registered::BasicFinder do
   subject { described_class.new(name: name, emails: emails, phones: phones) }
 
   describe '#execute' do
-
     context 'with invalid query params' do
       context 'without query key' do
         let(:name) { '' }
@@ -39,7 +38,6 @@ describe Customer::Registered::BasicFinder do
       let(:emails) { [customer.email] }
       let(:phones) { [other_customer.bill_address.phone] }
 
-
       it 'return results' do
         expect(Spree.user_class.all.size).to eq 2
         result = subject.execute
@@ -56,7 +54,6 @@ describe Customer::Registered::BasicFinder do
         let(:emails) { [customer.email] }
         let(:phones) { [] }
 
-
         it 'return single result' do
           expect(Spree.user_class.all.size).to eq 2
           result = subject.execute
@@ -68,7 +65,6 @@ describe Customer::Registered::BasicFinder do
         let(:name) { '' }
         let(:emails) { [customer.email, other_customer.email] }
         let(:phones) { [] }
-
 
         it 'return multiple result' do
           expect(Spree.user_class.all.size).to eq 2
@@ -85,7 +81,6 @@ describe Customer::Registered::BasicFinder do
         let(:name) { customer.bill_address.firstname }
         let(:emails) { [] }
         let(:phones) { [] }
-
 
         it 'return single result' do
           result = subject.execute

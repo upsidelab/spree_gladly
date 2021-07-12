@@ -7,12 +7,12 @@ describe Customer::Guest::BasicFinder do
 
   describe '#execute' do
     let!(:order) { create(:completed_order_with_pending_payment, user: nil, email: 'guest0@example.com') }
-    let!(:order_1) { create(:completed_order_with_pending_payment, user: nil, email: 'guest1@example.com') }
-    let!(:order_2) { create(:completed_order_with_pending_payment, user: nil, email: 'guest2@example.com') }
+    let!(:order1) { create(:completed_order_with_pending_payment, user: nil, email: 'guest1@example.com') }
+    let!(:order2) { create(:completed_order_with_pending_payment, user: nil, email: 'guest2@example.com') }
 
     context 'given valid params' do
       context 'given emails array' do
-        let(:emails) { [order.email, order_1.email] }
+        let(:emails) { [order.email, order1.email] }
         let(:options) { {} }
 
         it 'return expected result' do
@@ -26,10 +26,10 @@ describe Customer::Guest::BasicFinder do
       end
 
       context 'given emails array and options hash' do
-        let!(:user) { create(:user_with_addresses, email: 'guest2@example.com')}
-        let!(:order_2) { create(:completed_order_with_pending_payment, user: user) }
-        let(:emails) { [order_1.email, order_2.email] }
-        let(:options) { { excluded_emails: [order_2.email] } }
+        let!(:user) { create(:user_with_addresses, email: 'guest2@example.com') }
+        let!(:order2) { create(:completed_order_with_pending_payment, user: user) }
+        let(:emails) { [order1.email, order2.email] }
+        let(:options) { { excluded_emails: [order2.email] } }
 
         it 'return expected result' do
           expect(Spree::Order.all.size).to eq 3
@@ -37,7 +37,7 @@ describe Customer::Guest::BasicFinder do
           result = subject.execute
 
           expect(result.size).to eq 1
-          expect(result.first.email).to eq order_1.email
+          expect(result.first.email).to eq order1.email
         end
       end
     end

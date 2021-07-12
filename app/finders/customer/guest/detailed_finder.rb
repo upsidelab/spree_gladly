@@ -16,14 +16,14 @@ module Customer
       attr_reader :email
 
       def customer
-        transactions.first || Array.new
+        transactions.first || []
       end
 
       def transactions
         @transactions ||= Spree::Order
-                            .includes(:line_items)
-                            .where("(#{order_table}.user_id IS NULL AND #{order_table}.email = ?)", email)
-                            .to_a
+                          .includes(:line_items)
+                          .where("(#{order_table}.user_id IS NULL AND #{order_table}.email = ?)", email)
+                          .to_a
       end
 
       def order_table

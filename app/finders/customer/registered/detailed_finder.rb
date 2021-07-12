@@ -28,7 +28,7 @@ module Customer
       end
 
       def empty_result
-        OpenStruct.new(customer: Array.new, transactions: Array.new, guest: false)
+        OpenStruct.new(customer: [], transactions: [], guest: false)
       end
 
       def order_table

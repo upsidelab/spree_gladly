@@ -33,7 +33,7 @@ module Customer
       def custom_attributes
         {
           totalOrderCount: transactions_size,
-          guestOrderCount: transactions_size,
+          guestOrderCount: transactions_size
         }
       end
 

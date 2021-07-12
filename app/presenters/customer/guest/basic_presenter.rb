@@ -29,7 +29,6 @@ module Customer
         end
       end
 
-
       def customer_emails(guest_customer)
         [
           {

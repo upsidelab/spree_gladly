@@ -11,7 +11,6 @@ describe Customer::Registered::DetailedFinder do
       let!(:order1) { create(:completed_order_with_pending_payment, user: customer) }
       let!(:customer) { create(:user_with_addreses) }
 
-
       it 'return customer orders' do
         result = subject.execute
         expect(result.customer.id).to eq customer.id
@@ -52,7 +51,6 @@ describe Customer::Registered::DetailedFinder do
       context 'guest and signed orders' do
         let!(:order) { create(:completed_order_with_pending_payment, user: customer) }
         let!(:guest_order) { create(:completed_order_with_pending_payment, user: nil, email: customer.email) }
-
 
         it 'return customer orders' do
           expect(Spree::Order.all.size).to eq 2
