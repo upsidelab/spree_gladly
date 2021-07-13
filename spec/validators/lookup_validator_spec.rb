@@ -97,7 +97,7 @@ describe LookupValidator do
 
   context 'given valid emails' do
     context 'string' do
-      let(:emails) { "email" }
+      let(:emails) { 'email' }
 
       include_examples 'valid'
     end
@@ -137,7 +137,7 @@ describe LookupValidator do
 
   context 'given valid phones' do
     context 'string' do
-      let(:phones) { "phone" }
+      let(:phones) { 'phone' }
 
       include_examples 'valid'
     end

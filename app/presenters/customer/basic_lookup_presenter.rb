@@ -1,50 +1,29 @@
+# frozen_string_literal: true
+
 module Customer
   class BasicLookupPresenter
     def initialize(resource:)
       @resource = resource
+      @registered_customers = resource.registered_customers
+      @guest_customers = resource.guest_customers
     end
 
     def to_h
-      return [] if resource.empty?
+      return [] if guest_customers.empty? && registered_customers.empty?
 
-      basic_payload
+      registered_presenter.concat(guest_presenter)
     end
 
     private
 
-    attr_reader :resource
+    attr_reader :resource, :registered_customers, :guest_customers
 
-    def basic_payload
-      resource.map do |user|
-        {
-          externalCustomerId: user.id.to_s,
-          address: address(user).to_s&.gsub('<br/>', ' '),
-          name: address(user)&.full_name.to_s,
-          emails: customer_emails(user),
-          phones: customer_phones(user)
-        }
-      end
+    def registered_presenter
+      Customer::Registered::BasicPresenter.new(resource: registered_customers).to_h
     end
 
-
-    def customer_emails(user)
-      [
-        {
-          original: user.email
-        }
-      ]
-    end
-
-    def customer_phones(user)
-      [
-        {
-          original: address(user)&.phone.to_s
-        }
-      ]
-    end
-
-    def address(user)
-      user.ship_address
+    def guest_presenter
+      Customer::Guest::BasicPresenter.new(resource: guest_customers).to_h
     end
   end
 end

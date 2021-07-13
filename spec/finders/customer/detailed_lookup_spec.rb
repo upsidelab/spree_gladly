@@ -6,128 +6,103 @@ describe Customer::DetailedLookup do
   subject { described_class.new(params: params) }
 
   describe '#execute' do
-    context 'customer with orders' do
+    context 'registered customer' do
       let!(:customer) { create(:user_with_addreses) }
-      let!(:order) { create(:completed_order_with_pending_payment, user: customer) }
-      let!(:order1) { create(:completed_order_with_pending_payment, user: customer) }
+      let!(:orders) { create_list(:completed_order_with_pending_payment, 3, user_id: customer.id) }
 
-      let(:params) do
-        {
-          query: {
-            emails: customer.email,
-            externalCustomerId: customer.id
-          }
-        }
-      end
-
-      it 'return customer orders' do
-        result = subject.execute
-        expect(result.customer.id).to eq customer.id
-        expect(result.transactions.size).to eq 2
-      end
-    end
-
-    context 'customer without orders' do
-      let!(:customer) { create(:user_with_addreses) }
-
-      let(:params) do
-        {
-          query: {
-            emails: customer.email,
-            externalCustomerId: customer.id
-          }
-        }
-      end
-
-      it 'return empty array' do
-        result = subject.execute
-
-        expect(result.customer.id).to eq customer.id
-        expect(result.transactions.size).to eq 0
-      end
-    end
-
-    context 'guest orders' do
-      let!(:customer) { create(:user_with_addreses) }
-
-      context 'only guest orders' do
-        let!(:other_customer) { create(:user) }
-        let!(:order) { create(:completed_order_with_pending_payment, user: other_customer) }
-        let!(:guest_order) { create(:completed_order_with_pending_payment, user: nil, email: customer.email) }
+      context 'given valid params' do
         let(:params) do
           {
             query: {
-              emails: customer.email,
-              externalCustomerId: customer.id
+              externalCustomerId: customer.email
             }
           }
         end
 
-        it 'return orders' do
-          expect(Spree::Order.all.size).to eq 2
+        it 'return expected result' do
           result = subject.execute
-          expect(result.transactions.size).to eq 1
-          expect(result.transactions.first.id).to eq guest_order.id
+
+          expect(result.customer.nil?).to eq false
+          expect(result.guest).to eq false
+          expect(result.transactions.empty?).to eq false
+          expect(result.transactions.size).to eq 3
         end
       end
 
-      context 'guest and signed orders' do
-        let!(:order) { create(:completed_order_with_pending_payment, user: customer) }
-        let!(:guest_order) { create(:completed_order_with_pending_payment, user: nil, email: customer.email) }
+      context 'with guest orders' do
+        # rubocop:disable Layout/LineLength
+        let!(:guest_orders) { create_list(:completed_order_with_pending_payment, 2, user_id: nil, email: customer.email) }
+        # rubocop:enable Layout/LineLength
         let(:params) do
           {
             query: {
-              emails: customer.email,
-              externalCustomerId: customer.id
+              externalCustomerId: customer.email
             }
           }
         end
 
-        it 'return customer orders' do
-          expect(Spree::Order.all.size).to eq 2
+        it 'return expected result' do
           result = subject.execute
-          expect(result.transactions.size).to eq 2
+
+          guest_orders = result.transactions.select { |i| i.user_id.nil? }
+          expect(guest_orders.first).to be_present
+          expect(guest_orders.size).to eq 2
+          expect(result.transactions.size).to eq 5
         end
       end
-    end
 
-    context 'without results' do
-      let!(:customer) { create(:user_with_addreses) }
-      let!(:order) { create(:completed_order_with_pending_payment, user: customer) }
-      let!(:guest_order) { create(:completed_order_with_pending_payment, user: nil, email: customer.email) }
-      let(:params) do
-        {
-          query: {
-            emails: 'james.bond@example.com',
-            externalCustomerId: '0'
+      context 'given empty param' do
+        let(:params) do
+          {
+            query: {
+              externalCustomerId: ''
+            }
           }
-        }
-      end
+        end
 
-      it 'return empty result' do
-        expect(Spree::Order.all.size).to eq 2
-        result = subject.execute
-        expect(result.customer.size).to eq 0
-        expect(result.transactions.size).to eq 0
-      end
-    end
-
-    context 'with invalid params' do
-      context 'without query key' do
-        let(:params) { {} }
-
-        it 'return empty array' do
+        it 'return expected result' do
           result = subject.execute
+
           expect(result.customer).to eq []
           expect(result.transactions).to eq []
         end
       end
+    end
 
-      context 'with empty query key' do
-        let(:params) { { query: {} } }
+    context 'guest customer' do
+      let!(:customer) { orders.first }
+      let!(:orders) { create_list(:completed_order_with_pending_payment, 3, user_id: nil, email: 'guest@example.com') }
+      context 'given valid params' do
+        let(:params) do
+          {
+            query: {
+              externalCustomerId: customer.email
+            }
+          }
+        end
 
-        it 'return empty array' do
+        it 'return expected result' do
           result = subject.execute
+
+          expect(result.customer.nil?).to eq false
+          expect(result.guest).to eq true
+          expect(result.transactions.empty?).to eq false
+          expect(result.transactions.size).to eq 3
+        end
+      end
+
+      context 'given empty param' do
+        let(:params) do
+          {
+            query: {
+              externalCustomerId: ''
+            }
+          }
+        end
+
+        it 'return expected result' do
+          result = subject.execute
+
           expect(result.customer).to eq []
           expect(result.transactions).to eq []
         end

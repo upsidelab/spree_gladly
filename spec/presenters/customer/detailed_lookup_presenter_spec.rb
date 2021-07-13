@@ -1,49 +1,46 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Customer::DetailedLookupPresenter, as: :presenter do
   subject { described_class.new(resource: resource) }
 
   describe '#to_h' do
-    let(:resource) { OpenStruct.new(customer: customer, transactions: transactions) }
-
-    context 'with given resources' do
+    context 'registered customer' do
       let!(:customer) { create(:user_with_addresses) }
-      let!(:transactions) { create_list(:completed_order_with_pending_payment, 4) }
+      let!(:transactions) { create_list(:completed_order_with_pending_payment, 2) }
+      let(:resource) { OpenStruct.new(customer: customer, transactions: transactions, guest: false) }
 
-      it 'return formatted results' do
-        results = subject.to_h
-        expect(results.size).to eq 1
-        # Todo add more specs after test against Gladly
-        # rubocop:disable Layout/LineLength
-        expect(results.first.keys).to match_array %i[externalCustomerId name address emails phones customAttributes transactions]
-        expect(results.first[:transactions][0].keys).to match_array %i[type orderStatus orderNumber guest products orderLink note orderTotal createdAt]
-        expect(results.first[:transactions][0][:products].first.keys).to match_array %i[name status sku quantity total unitPrice imageUrl]
-        # rubocop:enable Layout/LineLength
-      end
-    end
-
-    context 'with given resource without transactions' do
-      let!(:customer) { create(:user_with_addresses) }
-      let!(:transactions) { [] }
-
-      it 'return formatted results' do
-        results = subject.to_h
-        expect(results.size).to eq 1
-        # rubocop:disable Layout/LineLength
-        expect(results.first.keys).to match_array %i[externalCustomerId name address emails phones customAttributes transactions]
-        # rubocop:enable Layout/LineLength
-        expect(results.first[:transactions]).to be_empty
-      end
-    end
-
-    context 'with given empty resources' do
-      let!(:customer) { [] }
-      let!(:transactions) { [] }
-
-      it 'return empty hash' do
+      it 'return formatted payload' do
         result = subject.to_h
-        expect(result.is_a?(Array)).to eq true
-        expect(result.empty?).to eq true
+
+        expect(result.first.keys).to eq %i[externalCustomerId name address emails phones customAttributes transactions]
+        expect(result.empty?).to eq false
+      end
+    end
+
+    context 'guest customer' do
+      let!(:customer) { transactions.first }
+      # rubocop:disable Layout/LineLength
+      let!(:transactions) { create_list(:completed_order_with_pending_payment, 3, user_id: nil, email: 'guest@example.com') }
+      # rubocop:enable Layout/LineLength
+      let(:resource) { OpenStruct.new(customer: customer, transactions: transactions, guest: true) }
+
+      it 'return formatted payload' do
+        result = subject.to_h
+
+        expect(result.first.keys).to eq %i[externalCustomerId customAttributes transactions]
+        expect(result.empty?).to eq false
+      end
+    end
+
+    context 'given no customer' do
+      let(:resource) { OpenStruct.new(customer: [], transactions: []) }
+
+      it 'return empty array' do
+        result = subject.to_h
+
+        expect(result).to eq []
       end
     end
   end

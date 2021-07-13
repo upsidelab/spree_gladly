@@ -3,54 +3,24 @@
 module Customer
   class BasicLookup < Customer::BaseLookup
     def execute
-      customers.uniq.sort
+      OpenStruct.new(
+        guest_customers: guest_customers(registered_customers.pluck(:email)),
+        registered_customers: registered_customers.uniq.sort
+      )
     end
 
     private
 
-    def customers
-      conditions = search_conditions
-      return empty_scope unless conditions.present?
-
-      template = conditions.map(&:first).join(' OR ')
-      args = conditions.map(&:last)
-
-      scope.where(template, *args)
+    def guest_customers(excluded_emails)
+      Customer::Guest::BasicFinder.new(emails: emails, options: { excluded_emails: excluded_emails }).execute
     end
 
-    def search_conditions
-      [by_email, by_name, by_phone].compact
-    end
-
-    def by_email
-      return nil unless emails.present?
-
-      where = "#{Spree.user_class.table_name}.email IN (?)"
-      [where, emails]
-    end
-
-    def by_name
-      return nil unless name.present?
-
-      sql_name = concat("#{Spree::Address.table_name}.firstname", "' '", "#{Spree::Address.table_name}.lastname")
-      where = "(LOWER(#{sql_name}) LIKE ?)"
-      args = "%#{name.downcase}%"
-      [where, args]
-    end
-
-    def by_phone
-      return nil unless phones.present?
-
-      where = "#{Spree::Address.table_name}.phone IN (?)"
-      [where, phones]
-    end
-
-    def empty_scope
-      Spree.user_class.none
-    end
-
-    def scope
-      Spree.user_class.eager_load(:ship_address, :bill_address)
+    def registered_customers
+      @registered_customers ||= Customer::Registered::BasicFinder.new(
+        name: name,
+        emails: emails,
+        phones: phones
+      ).execute
     end
   end
 end

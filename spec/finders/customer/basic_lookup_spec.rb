@@ -6,31 +6,10 @@ describe Customer::BasicLookup do
   subject { described_class.new(params: params) }
 
   describe '#execute' do
-    context 'with invalid query params' do
-      context 'without query key' do
-        let(:params) { {} }
-
-        it 'return empty array' do
-          result = subject.execute
-          expect(result).to eq []
-        end
-      end
-
-      context 'with empty query key' do
-        let(:params) { { query: {} } }
-
-        it 'return empty array' do
-          result = subject.execute
-          expect(result).to eq []
-        end
-      end
-    end
-
-    context 'various params type' do
-      let!(:customer) { create(:user_with_addreses) }
-      let!(:other_customer) { create(:user_with_addreses) }
-
-      context 'given params as array' do
+    context 'registered customers' do
+      context 'given valid params' do
+        let!(:customer) { create(:user_with_addreses) }
+        let!(:other_customer) { create(:user_with_addreses) }
         let(:params) do
           {
             query: {
@@ -40,191 +19,67 @@ describe Customer::BasicLookup do
           }
         end
 
-        it 'return results' do
-          expect(Spree.user_class.all.size).to eq 2
+        it 'return expected result' do
           result = subject.execute
-          expect(result.size).to eq 2
+          expect(result.guest_customers).to eq []
+          expect(result.registered_customers.empty?).to eq false
         end
       end
 
-      context 'given params as string' do
+      context 'given empty params query' do
         let(:params) do
           {
             query: {
-              emails: "#{customer.email}, #{other_customer.email}",
-              phones: "#{other_customer.ship_address.phone}, #{customer.ship_address.phone}"
+              emails: [],
+              phones: []
             }
           }
         end
 
-        it 'return results' do
-          expect(Spree.user_class.all.size).to eq 2
+        it 'return expected result' do
           result = subject.execute
-          expect(result.size).to eq 2
+
+          expect(result.guest_customers).to eq []
+          expect(result.registered_customers).to eq []
         end
       end
     end
 
-    context 'searching by all params' do
-      let!(:customer) { create(:user_with_addreses) }
-      let!(:other_customer) { create(:user_with_addreses) }
-      let(:params) do
-        {
-          query: {
-            emails: customer.email,
-            phones: [other_customer.ship_address.phone],
-            name: customer.ship_address.full_name
-          }
-        }
-      end
-
-      it 'return results' do
-        expect(Spree.user_class.all.size).to eq 2
-        result = subject.execute
-        expect(result.size).to eq 2
-      end
-    end
-
-    context 'searching by email' do
-      let!(:customer) { create(:user, email: 'test@example.com') }
-      let!(:other_customer) { create(:user, email: 'dummy@example.com') }
-
-      context 'with single email address' do
+    context 'guest customers' do
+      context 'given valid params' do
+        # rubocop:disable Layout/LineLength
+        let!(:customer) { create(:completed_order_with_pending_payment, user_id: nil, email: 'guest@example.com') }
+        let!(:other_customer) { create(:completed_order_with_pending_payment, user_id: nil, email: 'guest1@example.com') }
+        # rubocop:enable Layout/LineLength
         let(:params) do
           {
             query: {
-              emails: customer.email
+              emails: [customer.email, other_customer.email]
             }
           }
         end
 
-        it 'return single result' do
-          expect(Spree.user_class.all.size).to eq 2
+        it 'return expected result' do
           result = subject.execute
-          expect(result.size).to eq 1
+          expect(result.guest_customers.empty?).to eq false
+          expect(result.registered_customers).to eq []
         end
       end
 
-      context 'with multiple email addresses' do
+      context 'given empty params query' do
         let(:params) do
           {
             query: {
-              emails: "#{customer.email}, #{other_customer.email}"
+              emails: []
             }
           }
         end
 
-        it 'return multiple result' do
-          expect(Spree.user_class.all.size).to eq 2
+        it 'return expected result' do
           result = subject.execute
-          expect(result.size).to eq 2
-        end
-      end
-    end
 
-    context 'searching by name' do
-      let!(:customer) { create(:user_with_addreses) }
-
-      context 'by first_name' do
-        let(:params) do
-          {
-            query: {
-              name: customer.ship_address.firstname
-            }
-          }
-        end
-
-        it 'return single result' do
-          result = subject.execute
-          expect(result.size).to eq 1
-          expect(result.first.ship_address.full_name).to eq customer.ship_address.full_name
-        end
-      end
-
-      context 'by last_name' do
-        let(:params) do
-          {
-            query: {
-              name: customer.ship_address.lastname
-            }
-          }
-        end
-
-        it 'return single result' do
-          result = subject.execute
-          expect(result.size).to eq 1
-          expect(result.first.ship_address.full_name).to eq customer.ship_address.full_name
-        end
-      end
-
-      context 'uppercase name' do
-        let(:params) do
-          {
-            query: {
-              name: customer.ship_address.full_name.upcase
-            }
-          }
-        end
-
-        it 'return single result' do
-          result = subject.execute
-          expect(result.size).to eq 1
-          expect(result.first.ship_address.full_name).to eq customer.ship_address.full_name
-        end
-      end
-
-      context 'lowercase name' do
-        let(:params) do
-          {
-            query: {
-              name: customer.ship_address.full_name.downcase
-            }
-          }
-        end
-
-        it 'return single result' do
-          result = subject.execute
-          expect(result.size).to eq 1
-          expect(result.first.ship_address.full_name).to eq customer.ship_address.full_name
-        end
-      end
-    end
-
-    context 'searching by phone_numbers' do
-      let!(:customer) { create(:user_with_addreses) }
-      let!(:other_customer) { create(:user_with_addreses) }
-
-      context 'with single phone number' do
-        let(:params) do
-          {
-            query: {
-              phones: [customer.ship_address.phone]
-            }
-          }
-        end
-
-        before { other_customer.ship_address.update(phone: '666-666-666') }
-
-        it 'return single result' do
-          expect(Spree.user_class.all.size).to eq 2
-          result = subject.execute
-          expect(result.size).to eq 1
-        end
-      end
-
-      context 'with multiple phone number' do
-        let(:params) do
-          {
-            query: {
-              phones: [customer.ship_address.phone, other_customer.ship_address.phone]
-            }
-          }
-        end
-
-        it 'return multiple result' do
-          expect(Spree.user_class.all.size).to eq 2
-          result = subject.execute
-          expect(result.size).to eq 2
+          expect(result.guest_customers).to eq []
+          expect(result.registered_customers).to eq []
         end
       end
     end
