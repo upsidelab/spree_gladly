@@ -3,7 +3,7 @@
 module Customer
   module Registered
     class BasicFinder
-      include DatabaseAdapter
+      include Customer::DatabaseAdapter
 
       def initialize(name:, emails:, phones:)
         @name = name

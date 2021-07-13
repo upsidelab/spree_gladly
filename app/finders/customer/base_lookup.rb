@@ -2,7 +2,7 @@
 
 module Customer
   class BaseLookup
-    include DatabaseAdapter
+    include Customer::DatabaseAdapter
 
     def initialize(params:)
       @params = params
