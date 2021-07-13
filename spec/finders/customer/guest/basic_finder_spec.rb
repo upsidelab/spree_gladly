@@ -2,6 +2,7 @@
 
 require 'spec_helper'
 
+require 'byebug'
 describe Customer::Guest::BasicFinder do
   subject { described_class.new(emails: emails, options: options) }
 
@@ -38,6 +39,20 @@ describe Customer::Guest::BasicFinder do
 
           expect(result.size).to eq 1
           expect(result.first.email).to eq order1.email
+        end
+      end
+
+      context 'return single customer per result' do
+        let!(:order) { create(:completed_order_with_pending_payment, user: nil, email: 'guest@example.com') }
+        let!(:order1) { create_list(:completed_order_with_pending_payment, 3, user: nil, email: 'guest1@example.com') }
+
+        let(:emails) { [order.email, order1.first.email] }
+        let(:options) { {} }
+
+        it 'return expected result' do
+          result = subject.execute
+
+          expect(result.size).to eq emails.size
         end
       end
     end
