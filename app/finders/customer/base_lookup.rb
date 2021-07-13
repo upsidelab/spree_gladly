@@ -24,7 +24,7 @@ module Customer
     end
 
     def guest_customer?
-      customer.present?
+      !customer.present?
     end
 
     def normalize_param(param:)
