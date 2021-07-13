@@ -33,7 +33,8 @@ module Customer
       def custom_attributes
         {
           totalOrderCount: transactions_size,
-          guestOrderCount: transactions_size
+          guestOrderCount: transactions_size,
+          lifetimeValue: lifetime_value
         }
       end
 
@@ -69,6 +70,12 @@ module Customer
 
       def transactions_size
         @transactions_size ||= resource.transactions.size.to_s
+      end
+
+      def lifetime_value
+        return '0' if resource.transactions.empty?
+
+        Spree::Money.new(resource.transactions.sum(&:total)).to_html
       end
 
       def order_url(transaction)
