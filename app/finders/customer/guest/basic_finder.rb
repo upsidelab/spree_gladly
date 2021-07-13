@@ -11,7 +11,6 @@ module Customer
       def execute
         return [] if emails.empty?
 
-        byebug
         guest_customers.uniq(&:email)
       end
 

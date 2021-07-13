@@ -2,7 +2,6 @@
 
 require 'spec_helper'
 
-require 'byebug'
 describe Customer::Guest::BasicFinder do
   subject { described_class.new(emails: emails, options: options) }
 
