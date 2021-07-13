@@ -3,6 +3,8 @@
 module Customer
   module Registered
     class BasicFinder
+      include DatabaseAdapter
+
       def initialize(name:, emails:, phones:)
         @name = name
         @emails = emails
@@ -60,23 +62,6 @@ module Customer
 
       def scope
         Spree.user_class.eager_load(:ship_address, :bill_address)
-      end
-
-      # move to concern and include
-      def concat(*args)
-        if adapter =~ /mysql/i
-          "CONCAT(#{args.join(',')})"
-        else
-          args.join('||')
-        end
-      end
-
-      def adapter
-        if ActiveRecord::Base.respond_to?(:connection_db_config)
-          ActiveRecord::Base.connection_db_config.configuration_hash[:adapter]
-        else
-          ActiveRecord::Base.connection_config[:adapter]
-        end
       end
     end
   end
