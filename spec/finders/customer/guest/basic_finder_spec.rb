@@ -21,7 +21,7 @@ describe Customer::Guest::BasicFinder do
           result = subject.execute
 
           expect(result.size).to eq 2
-          expect(result.pluck(:email).sort).to eq emails.sort
+          expect(result.map(&:email).sort).to eq emails.sort
         end
       end
 
