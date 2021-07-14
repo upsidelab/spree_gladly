@@ -23,6 +23,7 @@ module Customer
           .where(user_id: nil)
           .where(email: search_emails)
           .order(created_at: :desc)
+          .to_a
       end
 
       def search_emails
