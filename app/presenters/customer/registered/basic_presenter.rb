@@ -47,7 +47,7 @@ module Customer
       end
 
       def address(user)
-        user.bill_address
+        user.bill_address || user.orders.first&.bill_address
       end
     end
   end
