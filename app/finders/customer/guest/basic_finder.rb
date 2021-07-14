@@ -11,7 +11,7 @@ module Customer
       def execute
         return [] if emails.empty?
 
-        guest_customers.uniq(&:email)
+        guest_customers
       end
 
       private
@@ -24,6 +24,7 @@ module Customer
           .where(email: search_emails)
           .order(created_at: :desc)
           .to_a
+          .uniq(&:email)
       end
 
       def search_emails
