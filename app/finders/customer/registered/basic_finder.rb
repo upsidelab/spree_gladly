@@ -61,7 +61,7 @@ module Customer
       end
 
       def scope
-        Spree.user_class.eager_load(:ship_address, :bill_address)
+        Spree.user_class.eager_load(:bill_address, :orders)
       end
     end
   end
