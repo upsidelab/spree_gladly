@@ -33,7 +33,8 @@ module Customer
       def custom_attributes
         {
           totalOrderCount: transactions_size,
-          guestOrderCount: transactions_size
+          guestOrderCount: transactions_size,
+          lifetimeValue: lifetime_value
         }
       end
 
@@ -71,6 +72,12 @@ module Customer
         @transactions_size ||= resource.transactions.size.to_s
       end
 
+      def lifetime_value
+        return '0' if resource.transactions.empty?
+
+        Spree::Money.new(resource.transactions.sum(&:total)).to_html
+      end
+
       def order_url(transaction)
         edit_admin_order_url(id: transaction.number, host: Rails.application.routes.default_url_options[:host])
       end
@@ -102,7 +109,7 @@ module Customer
       end
 
       def address
-        @address ||= resource.customer.ship_address
+        @address ||= resource.customer.bill_address
       end
     end
   end

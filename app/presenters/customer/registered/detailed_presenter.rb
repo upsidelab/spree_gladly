@@ -125,7 +125,7 @@ module Customer
       end
 
       def address
-        @address ||= resource.customer.ship_address
+        @address ||= resource.customer.bill_address
       end
     end
   end
