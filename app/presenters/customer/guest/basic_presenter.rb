@@ -21,7 +21,7 @@ module Customer
         resource.map do |guest_customer|
           {
             externalCustomerId: guest_customer.email,
-            address: guest_customer&.bill_address.to_s&.gsub('<br/>', ' '),
+            address: formatted_address(guest_customer),
             name: guest_customer&.bill_address&.full_name.to_s,
             emails: customer_emails(guest_customer),
             phones: customer_phones(guest_customer)
@@ -43,6 +43,10 @@ module Customer
             original: guest_customer&.bill_address&.phone.to_s
           }
         ]
+      end
+
+      def formatted_address(guest_customer)
+        Customer::AddressPresenter.new(guest_customer&.bill_address).to_s
       end
     end
   end

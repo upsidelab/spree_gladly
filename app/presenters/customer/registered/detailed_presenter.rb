@@ -26,7 +26,7 @@ module Customer
           {
             externalCustomerId: resource.customer.email,
             name: address&.full_name,
-            address: address.to_s&.gsub('<br/>', ' '),
+            address: formatted_address,
             emails: emails,
             phones: phones,
             customAttributes: custom_attributes,
@@ -126,6 +126,10 @@ module Customer
 
       def address
         @address ||= resource.customer.bill_address || resource.transactions.first.bill_address
+      end
+
+      def formatted_address
+        Customer::AddressPresenter.new(address).to_s
       end
     end
   end

@@ -24,7 +24,7 @@ module Customer
             customAttributes: {
               spreeId: user.id
             },
-            address: address(user).to_s&.gsub('<br/>', ' '),
+            address: formatted_address(user),
             name: address(user)&.full_name.to_s,
             emails: customer_emails(user),
             phones: customer_phones(user)
@@ -50,6 +50,10 @@ module Customer
 
       def address(user)
         user.bill_address || user.orders.first&.bill_address
+      end
+
+      def formatted_address(user)
+        Customer::AddressPresenter.new(address(user)).to_s
       end
     end
   end
