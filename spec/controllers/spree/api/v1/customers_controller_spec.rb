@@ -113,7 +113,6 @@ describe ::Spree::Api::V1::CustomersController, type: :request do
           # rubocop:enable Layout/LineLength
           expect(results['results'].first['externalCustomerId']).to eq user.email
           expect(results['results'].first['name']).to eq user.ship_address.full_name
-          expect(results['results'].first['address']).to eq user.ship_address.to_s&.gsub('<br/>', ' ')
           expect(results['results'].first['emails'][0]['original']).to eq user.email
           expect(results['results'].first['phones'][0]['original']).to eq user.ship_address.phone
         end
