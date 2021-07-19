@@ -22,7 +22,7 @@ module Customer
           {
             externalCustomerId: user.email,
             customAttributes: {
-              spreeId: user.id,
+              spreeId: user.id
             },
             address: address(user).to_s&.gsub('<br/>', ' '),
             name: address(user)&.full_name.to_s,

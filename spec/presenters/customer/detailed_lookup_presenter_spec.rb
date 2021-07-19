@@ -29,7 +29,7 @@ describe Customer::DetailedLookupPresenter, as: :presenter do
       it 'return formatted payload' do
         result = subject.to_h
 
-        expect(result.first.keys).to eq %i[externalCustomerId customAttributes transactions]
+        expect(result.first.keys).to match_array %i[externalCustomerId emails customAttributes transactions]
         expect(result.empty?).to eq false
       end
     end
