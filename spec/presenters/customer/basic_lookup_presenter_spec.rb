@@ -30,7 +30,8 @@ describe Customer::BasicLookupPresenter, as: :presenter do
         result = subject.to_h
 
         expect(result.empty?).to eq false
-        expect(result.first.keys).to eq %i[externalCustomerId spreeId address name emails phones]
+        expect(result.first.keys).to eq %i[externalCustomerId customAttributes address name emails phones]
+        expect(result.first[:customAttributes].keys).to eq [:spreeId]
       end
     end
 
@@ -45,10 +46,12 @@ describe Customer::BasicLookupPresenter, as: :presenter do
 
       it 'return formatted payload' do
         result = subject.to_h
-        registered_format = result.find { |i| i[:externalCustomerId] == customer.email }.keys
+        registered_result = result.find { |i| i[:externalCustomerId] == customer.email }
+        registered_format = registered_result.keys
         guest_format = result.find { |i| i[:externalCustomerId] == order.email }.keys
 
-        expect(registered_format).to eq %i[externalCustomerId spreeId address name emails phones]
+        expect(registered_format).to eq %i[externalCustomerId customAttributes address name emails phones]
+        expect(registered_result[:customAttributes].keys).to eq [:spreeId]
         expect(guest_format).to eq %i[externalCustomerId address name emails phones]
       end
     end

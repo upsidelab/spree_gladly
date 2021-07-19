@@ -12,7 +12,8 @@ describe Customer::Registered::BasicPresenter, as: :presenter do
       it 'return formatted results' do
         results = subject.to_h
         expect(results.size).to eq 4
-        expect(results.first.keys).to eq %i[externalCustomerId spreeId address name emails phones]
+        expect(results.first.keys).to eq %i[externalCustomerId customAttributes address name emails phones]
+        expect(results.first[:customAttributes].keys).to eq [:spreeId]
       end
     end
 
