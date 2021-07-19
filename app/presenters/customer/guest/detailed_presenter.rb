@@ -25,6 +25,7 @@ module Customer
           {
             externalCustomerId: resource.customer.email,
             customAttributes: custom_attributes,
+            emails: emails,
             transactions: transactions
           }
         ]

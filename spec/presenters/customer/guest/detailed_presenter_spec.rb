@@ -17,7 +17,7 @@ describe Customer::Guest::DetailedPresenter, as: :presenter do
         expect(results.size).to eq 1
         # Todo add more specs after test against Gladly
         # rubocop:disable Layout/LineLength
-        expect(results.first.keys).to match_array %i[externalCustomerId customAttributes transactions]
+        expect(results.first.keys).to match_array %i[externalCustomerId emails customAttributes transactions]
         expect(results.first[:transactions][0].keys).to match_array %i[type orderStatus orderNumber guest products orderLink note orderTotal createdAt]
         expect(results.first[:transactions][0][:products].first.keys).to match_array %i[name status sku quantity total unitPrice imageUrl]
         # rubocop:enable Layout/LineLength
@@ -31,7 +31,7 @@ describe Customer::Guest::DetailedPresenter, as: :presenter do
       it 'return formatted results' do
         results = subject.to_h
         expect(results.size).to eq 1
-        expect(results.first.keys).to match_array %i[externalCustomerId customAttributes transactions]
+        expect(results.first.keys).to match_array %i[externalCustomerId emails customAttributes transactions]
         expect(results.first[:transactions]).to be_empty
       end
     end
