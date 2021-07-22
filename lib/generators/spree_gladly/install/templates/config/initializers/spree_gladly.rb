@@ -6,6 +6,9 @@ SpreeGladly.setup do |config|
   # You can change serializer on your own
   config.basic_lookup_presenter = Customer::BasicLookupPresenter
   config.detailed_lookup_presenter = Customer::DetailedLookupPresenter
+  config.order_limit = nil
+  config.order_includes = [:line_items]
+  config.order_sorting = { created_at: :desc }
 
   # The request's timestamp is validated against `signing_threshold` to prevent replay attacks.
   # Setting this value to `0` disables the threshold validation.

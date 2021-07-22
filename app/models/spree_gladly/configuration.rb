@@ -3,10 +3,16 @@ module SpreeGladly
     preference :signing_key, :string, default: ''
     preference :signing_threshold, :integer, default: 0
 
-    attr_accessor :basic_lookup_presenter, :detailed_lookup_presenter
+    attr_accessor :basic_lookup_presenter, :detailed_lookup_presenter, :order_limit, :order_includes, :order_sorting
 
     @basic_lookup_presenter = nil
 
     @detailed_lookup_presenter = nil
+
+    @order_limit = nil
+
+    @order_includes = nil
+
+    @order_sorting = nil
   end
 end
