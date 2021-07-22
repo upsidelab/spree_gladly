@@ -7,14 +7,59 @@ describe Customer::Registered::DetailedFinder do
 
   describe '#execute' do
     context 'customer with orders' do
-      let!(:order) { create(:completed_order_with_pending_payment, user: customer) }
-      let!(:order1) { create(:completed_order_with_pending_payment, user: customer) }
+      let!(:order1) do
+        create(:completed_order_with_pending_payment, user: customer, created_at: '2021-01-01 0:00:00 UTC')
+      end
+      let!(:order2) do
+        create(:completed_order_with_pending_payment, user: customer, created_at: '2021-01-02 0:00:00 UTC')
+      end
+      let!(:order3) do
+        create(:completed_order_with_pending_payment, user: customer, created_at: '2021-01-03 0:00:00 UTC')
+      end
+      let!(:order4) do
+        create(:completed_order_with_pending_payment, user: customer, created_at: '2021-01-04 0:00:00 UTC')
+      end
+      let!(:order5) do
+        create(:completed_order_with_pending_payment, user: customer, created_at: '2021-01-05 0:00:00 UTC')
+      end
+      let!(:customer) { create(:user_with_addreses) }
+
+      it 'return customer orders' do
+        result = subject.execute
+        expect(result.customer.id).to eq customer.id
+        expect(result.transactions.size).to eq 5
+        expect(result.guest).to eq false
+      end
+    end
+
+    context 'customer with orders when orders are limited and sorted' do
+      before do
+        allow(SpreeGladly::Config).to receive(:order_limit).and_return(2)
+        allow(SpreeGladly::Config).to receive(:order_sorting).and_return({ created_at: :desc })
+      end
+
+      let!(:order1) do
+        create(:completed_order_with_pending_payment, user: customer, created_at: '2021-01-01 0:00:00 UTC')
+      end
+      let!(:order2) do
+        create(:completed_order_with_pending_payment, user: customer, created_at: '2021-01-02 0:00:00 UTC')
+      end
+      let!(:order3) do
+        create(:completed_order_with_pending_payment, user: customer, created_at: '2021-01-03 0:00:00 UTC')
+      end
+      let!(:order4) do
+        create(:completed_order_with_pending_payment, user: customer, created_at: '2021-01-04 0:00:00 UTC')
+      end
+      let!(:order5) do
+        create(:completed_order_with_pending_payment, user: customer, created_at: '2021-01-05 0:00:00 UTC')
+      end
       let!(:customer) { create(:user_with_addreses) }
 
       it 'return customer orders' do
         result = subject.execute
         expect(result.customer.id).to eq customer.id
         expect(result.transactions.size).to eq 2
+        expect(result.transactions).to eq([order5, order4])
         expect(result.guest).to eq false
       end
     end

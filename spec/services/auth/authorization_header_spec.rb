@@ -53,8 +53,8 @@ describe Auth::AuthorizationHeader do
     context 'given gladly documentation example' do
       let(:header) do
         'SigningAlgorithm=hmac-sha256, '\
-        'SignedHeaders=accept;content-type;gladly-correlation-id;gladly-time;x-b3-traceid, '\
-        'Signature=4c633fca4914f51df04c9ec40f4545d66d653e771c6634e33eed52a242bc278c'
+          'SignedHeaders=accept;content-type;gladly-correlation-id;gladly-time;x-b3-traceid, '\
+          'Signature=4c633fca4914f51df04c9ec40f4545d66d653e771c6634e33eed52a242bc278c'
       end
 
       it 'return a valid AuthorizationHeader' do
