@@ -64,6 +64,34 @@ describe Customer::Registered::DetailedFinder do
       end
     end
 
+    context 'customer with orders when order state are limited' do
+      before do
+        allow(SpreeGladly::Config).to receive(:order_states).and_return(%w[complete canceled])
+      end
+
+      let!(:customer) { create(:user_with_addreses) }
+      let!(:order1) do
+        create(:completed_order_with_pending_payment, user: customer)
+      end
+      let!(:order2) do
+        create(:completed_order_with_pending_payment, user: customer)
+      end
+      let!(:order3) do
+        create(:completed_order_with_pending_payment, user: customer, state: 'canceled')
+      end
+      let!(:order4) do
+        create(:completed_order_with_pending_payment, user: customer, state: 'confirm')
+      end
+
+      it 'return customer orders' do
+        result = subject.execute
+
+        expect(result.transactions.size).to eq 3
+        expect(result.transactions.map(&:state).sort.uniq).to eq %w[canceled complete]
+        expect(result.guest).to eq false
+      end
+    end
+
     context 'customer without orders' do
       let!(:customer) { create(:user_with_addreses) }
 

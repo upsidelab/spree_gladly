@@ -23,6 +23,7 @@ module Customer
 
         scope = Spree::Order
                 .includes(SpreeGladly::Config.order_includes)
+                .where(state: SpreeGladly::Config.order_states)
                 .order(SpreeGladly::Config.order_sorting)
                 .where("#{customer_orders} OR #{guest_orders}", customer.id, customer.email)
 
