@@ -176,8 +176,8 @@ OOTB the extension allows searching by email, phone number and name of the custo
   "lookupLevel":"BASIC",
   "uniqueMatchRequired":false,
   "query":{
-    "email":"customer@example.com",
-    "phone":"666-666-666",
+    "emails":"customer@example.com",
+    "phones":"666-666-666",
     "name": "Elka Melka",
   }
 }
