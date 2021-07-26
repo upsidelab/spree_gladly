@@ -26,13 +26,11 @@ describe Customer::Guest::DetailedFinder do
       create(:completed_order_with_pending_payment, user: nil, email: 'guest@example.com',
                                                     created_at: '2021-01-05 0:00:00 UTC')
     end
-    let!(:order) { create_list(:completed_order_with_pending_payment, 2) }
 
     context 'given valid email' do
       let(:external_customer_id) { 'guest@example.com' }
 
       it 'return query result' do
-        expect(Spree::Order.all.size).to eq 7
         result = subject.execute
         expect(result.customer.email).to eq external_customer_id
         expect(result.transactions.size).to eq 5
@@ -52,6 +50,26 @@ describe Customer::Guest::DetailedFinder do
         expect(result.customer.email).to eq external_customer_id
         expect(result.transactions.size).to eq 2
         expect(result.transactions).to eq([order5, order4])
+      end
+    end
+
+    context 'with limiting state of orders' do
+      before do
+        allow(SpreeGladly::Config).to receive(:order_states).and_return(%w[complete canceled])
+
+        order1.update(state: 'canceled')
+        order2.update(state: 'canceled')
+        order3.update(state: 'confirm')
+      end
+
+      let(:external_customer_id) { 'guest@example.com' }
+
+      it 'return orders with limited states' do
+        result = subject.execute
+
+        expect(result.customer.email).to eq external_customer_id
+        expect(result.transactions.size).to eq 4
+        expect(result.transactions.map(&:state).uniq).to eq %w[complete canceled]
       end
     end
 

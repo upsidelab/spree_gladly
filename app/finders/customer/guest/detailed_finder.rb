@@ -26,9 +26,9 @@ module Customer
       def find_transactions
         scope = Spree::Order
                 .includes(SpreeGladly::Config.order_includes)
+                .where(state: SpreeGladly::Config.order_states)
                 .order(SpreeGladly::Config.order_sorting)
                 .where("(#{order_table}.user_id IS NULL AND #{order_table}.email = ?)", email)
-
 
         scope = scope.limit(SpreeGladly::Config.order_limit) if SpreeGladly::Config.order_limit
         scope.to_a

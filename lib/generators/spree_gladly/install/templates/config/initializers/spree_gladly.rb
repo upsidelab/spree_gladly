@@ -9,6 +9,7 @@ SpreeGladly.setup do |config|
   config.order_limit = nil
   config.order_includes = [:line_items]
   config.order_sorting = { created_at: :desc }
+  config.order_states = ['complete']
 
   # The request's timestamp is validated against `signing_threshold` to prevent replay attacks.
   # Setting this value to `0` disables the threshold validation.
