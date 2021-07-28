@@ -41,7 +41,7 @@ module Customer
           lifetimeValue: lifetime_value,
           totalOrderCount: resource.transactions.size.to_s,
           guestOrderCount: calculate_guest_transactions.to_s,
-          memberSince: pretty_time(resource.customer.created_at).to_s,
+          memberSince: resource.customer.created_at,
           customerLink: customer_profile_url(resource.customer)
         }
       end
