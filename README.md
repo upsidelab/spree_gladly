@@ -62,7 +62,11 @@ SpreeGladly.setup do |config|
   # You can change serializer on your own
   config.basic_lookup_presenter = Customer::BasicLookupPresenter
   config.detailed_lookup_presenter = Customer::DetailedLookupPresenter
-
+  config.order_limit = nil
+  config.order_includes = [:line_items]
+  config.order_sorting = { created_at: :desc }
+  config.order_states = ['complete']
+  
   # The request's timestamp is validated against `signing_threshold` to prevent replay attacks.
   # Setting this value to `0` disables the threshold validation.
   # Default is `0`.
@@ -77,6 +81,10 @@ where you are able to set the preferences:
 - **signing_threshold:** *time value to prevent replay attacks ( default: 0 )*
 - **basic_lookup_presenter:** *presenter which is responsible for basic lookup `results` payload ( default: Customer::BasicLookupPresenter )*
 - **detailed_lookup_presenter:** *presenter which is responsible for detailed lookup `results` payload ( default: Customer::DetailedLookupPresenter )*
+- **order_limit:** *you can set limit returned orders number, if `nil` than no limits `default: nil`*  
+- **order_includes:** *you can set what relation should be included in query, `default: :line_items`*  
+- **order_sorting:** *you can set how returned orders should be sorted `default: { created_at: :desc }`
+- **order_states:** *you can set order `state` which should be returned in response `default: ['complete']`*
 
 You can also set `signing_key` and `signing_threshold` via the admin dashboard in your Spree instance. To do that, open `Gladly Settings` in the `Configurations` section.
 
@@ -104,7 +112,10 @@ Provide to your agent:
 
 ## Customization
 
-Within `spree_gladly` gem you are able to customize response payload i.e [detailed lookup response](#detailed-lookup) by replacing `Customer::DetailedLookupPresenter` in `config/initializers/spree_gladly.rb` initializer file with your own.
+Within `spree_gladly` gem we distinguish response for `guest` and `registerd` customer. For customize those, i.e [detailed lookup response](#detailed-lookup), to do that you have do following steps:
+
+1. replace `Customer::DetailedLookupPresenter` in `config/initializers/spree_gladly.rb` initializer file with your own.
+2. override methods `registerd_presneter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/registered/detailed_presenter.rb) ) or `guest_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/guest/detailed_presenter.rb) ) with your own. 
 
 Please consider below example:
 
@@ -117,26 +128,21 @@ class GladlyCustomersPresenter
   end
 
   def to_h
-    return {} unless resource.customer.present?
+    return [] unless resource.customer.present?
 
-    detailed_payload
+    resource.guest ? guest_presenter : registered_presenter
   end
 
   private
 
   attr_reader :resource
 
-  def detailed_payload
-    [
-      {
-        externalCustomerId: resource.customer&.id.to_s,
-        name: address&.full_name,
-        address: address.to_s&.gsub('<br/>', ' '),
-        emails: emails,
-        phones: phones,
-        orders: orders
-      }
-    ]
+  def registered_presenter
+    YourOwn::DetailedPresenter.new(resource: resource).to_h
+  end
+
+  def guest_presenter
+    Customer::Guest::DetailedPresenter.new(resource: resource).to_h
   end
   ...
 end
