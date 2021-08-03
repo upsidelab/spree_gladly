@@ -82,6 +82,19 @@ You can also set `signing_key` and `signing_threshold` via the admin dashboard i
 
 <img width="1436" alt="gladly_settings_admin_dashboard" src="https://user-images.githubusercontent.com/1455599/123083627-83c99400-d420-11eb-87ca-c1c5e20583d9.png">
 
+### !!! Important !!!
+
+For database query optimization please consider add index for `email` field in `Spree::Order` table, please look on below example:
+
+```ruby
+class AddEmailIndexToSpreeOrders < ActiveRecord::Migration
+
+  def change
+    add_index :spree_orders, :email
+  end
+end
+```
+
 
 ### Gladly Service side:
 
