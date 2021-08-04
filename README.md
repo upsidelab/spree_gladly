@@ -82,9 +82,9 @@ where you are able to set the preferences:
 - **basic_lookup_presenter:** *presenter which is responsible for basic lookup `results` payload ( default: Customer::BasicLookupPresenter )*
 - **detailed_lookup_presenter:** *presenter which is responsible for detailed lookup `results` payload ( default: Customer::DetailedLookupPresenter )*
 - **order_limit:** *you can set limit returned orders number, if `nil` than no limits `default: nil`*  
-- **order_includes:** *you can set what relation should be included in query, `default: :line_items`*  
+- **order_includes:** *you can set what relation should be included in query, `default: :line_items`. Also that this gets passed into .include() when fetching detailed lookup - if you want to display data from order's relationships, you may want to optimize the query*  
 - **order_sorting:** *you can set how returned orders should be sorted `default: { created_at: :desc }`
-- **order_states:** *you can set order `state` which should be returned in response `default: ['complete']`*
+- **order_states:** *you can set order `state` which should be returned in response `default: ['complete']`. This defines states of `orders` that will be returned to Gladly (and that by default it will exclude `Spree::Orders` in `cart|address|delivery|payment` states*
 
 You can also set `signing_key` and `signing_threshold` via the admin dashboard in your Spree instance. To do that, open `Gladly Settings` in the `Configurations` section.
 
@@ -92,8 +92,8 @@ You can also set `signing_key` and `signing_threshold` via the admin dashboard i
 
 ### !!! Important !!!
 
-For database query optimization please consider add index for `email` field in `Spree::Order` table, please look on below example:
-
+Detailed lookups find customer's orders based on customer's profile, but will also include guest orders made with the same email address.
+By default, Spree doesn't index the `email` field of `Spree::Orders` table. To ensure smooth operation of the lookup endpoint, add the following migration to your application.
 ```ruby
 class AddEmailIndexToSpreeOrders < ActiveRecord::Migration
 
@@ -116,7 +116,7 @@ Provide to your agent:
 Within `spree_gladly` gem we distinguish response for `guest` and `registerd` customer. For customize those, i.e [detailed lookup response](#detailed-lookup), to do that you have do following steps:
 
 1. replace `Customer::DetailedLookupPresenter` in `config/initializers/spree_gladly.rb` initializer file with your own.
-2. override methods `registerd_presneter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/registered/detailed_presenter.rb) ) or `guest_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/guest/detailed_presenter.rb) ) with your own. 
+2. override methods `registerd_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/registered/detailed_presenter.rb) ) or `guest_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/guest/detailed_presenter.rb) ) with your own. 
 
 Please consider below example:
 
