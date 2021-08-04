@@ -81,7 +81,7 @@ where you are able to set the preferences:
 - **signing_threshold:** *time value to prevent replay attacks ( default: 0 )*
 - **basic_lookup_presenter:** *presenter which is responsible for basic lookup `results` payload ( default: Customer::BasicLookupPresenter )*
 - **detailed_lookup_presenter:** *presenter which is responsible for detailed lookup `results` payload ( default: Customer::DetailedLookupPresenter )*
-- **order_limit:** *you can set limit returned orders number, if `nil` than no limits `default: nil`*  
+- **order_limit:** *you can set limit returned orders number in `detailed lookup` response, if `nil` than no limits `default: nil`*  
 - **order_includes:** *you can set what relation should be included in query, `default: :line_items`. Also that this gets passed into .include() when fetching detailed lookup - if you want to display data from order's relationships, you may want to optimize the query*  
 - **order_sorting:** *you can set how returned orders should be sorted `default: { created_at: :desc }`
 - **order_states:** *you can set order `state` which should be returned in response `default: ['complete']`. This defines states of `orders` that will be returned to Gladly (and that by default it will exclude `Spree::Orders` in `cart|address|delivery|payment` states*
