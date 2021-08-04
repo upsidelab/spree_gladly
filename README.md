@@ -102,6 +102,7 @@ class AddEmailIndexToSpreeOrders < ActiveRecord::Migration
   end
 end
 ```
+***Note: please adjust migration to yours Rails version***
 
 
 ### Gladly Service side:
