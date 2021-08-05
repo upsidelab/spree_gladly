@@ -62,7 +62,11 @@ SpreeGladly.setup do |config|
   # You can change serializer on your own
   config.basic_lookup_presenter = Customer::BasicLookupPresenter
   config.detailed_lookup_presenter = Customer::DetailedLookupPresenter
-
+  config.order_limit = nil
+  config.order_includes = [:line_items]
+  config.order_sorting = { created_at: :desc }
+  config.order_states = ['complete']
+  
   # The request's timestamp is validated against `signing_threshold` to prevent replay attacks.
   # Setting this value to `0` disables the threshold validation.
   # Default is `0`.
@@ -77,10 +81,28 @@ where you are able to set the preferences:
 - **signing_threshold:** *time value to prevent replay attacks ( default: 0 )*
 - **basic_lookup_presenter:** *presenter which is responsible for basic lookup `results` payload ( default: Customer::BasicLookupPresenter )*
 - **detailed_lookup_presenter:** *presenter which is responsible for detailed lookup `results` payload ( default: Customer::DetailedLookupPresenter )*
+- **order_limit:** *you can set limit returned orders number in `detailed lookup` response, if `nil` than no limits `default: nil`*  
+- **order_includes:** *you can set what relation should be included in query, `default: :line_items`. This gets passed into .include() when fetching detailed lookup - if you want to display data from order's relationships, you may want to optimize the query*  
+- **order_sorting:** *you can set how returned orders should be sorted `default: { created_at: :desc }`
+- **order_states:** *you can set order `state` which should be returned in response `default: ['complete']`. This defines states of `orders` that will be returned to Gladly (and that by default it will exclude `Spree::Orders` in `cart|address|delivery|payment` states*
 
 You can also set `signing_key` and `signing_threshold` via the admin dashboard in your Spree instance. To do that, open `Gladly Settings` in the `Configurations` section.
 
 <img width="1436" alt="gladly_settings_admin_dashboard" src="https://user-images.githubusercontent.com/1455599/123083627-83c99400-d420-11eb-87ca-c1c5e20583d9.png">
+
+### !!! Important !!!
+
+Detailed lookups find customer's orders based on customer's profile, but will also include guest orders made with the same email address.
+By default, Spree doesn't index the `email` field of `Spree::Orders` table. To ensure smooth operation of the lookup endpoint, add the following migration to your application.
+```ruby
+class AddEmailIndexToSpreeOrders < ActiveRecord::Migration
+
+  def change
+    add_index :spree_orders, :email
+  end
+end
+```
+***Note: please adjust migration to yours Rails version***
 
 
 ### Gladly Service side:
@@ -91,7 +113,10 @@ Provide to your agent:
 
 ## Customization
 
-Within `spree_gladly` gem you are able to customize response payload i.e [detailed lookup response](#detailed-lookup) by replacing `Customer::DetailedLookupPresenter` in `config/initializers/spree_gladly.rb` initializer file with your own.
+Within `spree_gladly` gem we distinguish response for `guest` and `registerd` customer. For customize those, i.e [detailed lookup response](#detailed-lookup), to do that you have do following steps:
+
+1. replace `Customer::DetailedLookupPresenter` in `config/initializers/spree_gladly.rb` initializer file with your own.
+2. override methods `registerd_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/registered/detailed_presenter.rb) ) or `guest_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/guest/detailed_presenter.rb) ) with your own. 
 
 Please consider below example:
 
@@ -104,26 +129,21 @@ class GladlyCustomersPresenter
   end
 
   def to_h
-    return {} unless resource.customer.present?
+    return [] unless resource.customer.present?
 
-    detailed_payload
+    resource.guest ? guest_presenter : registered_presenter
   end
 
   private
 
   attr_reader :resource
 
-  def detailed_payload
-    [
-      {
-        externalCustomerId: resource.customer&.id.to_s,
-        name: address&.full_name,
-        address: address.to_s&.gsub('<br/>', ' '),
-        emails: emails,
-        phones: phones,
-        orders: orders
-      }
-    ]
+  def registered_presenter
+    YourOwn::DetailedPresenter.new(resource: resource).to_h
+  end
+
+  def guest_presenter
+    Customer::Guest::DetailedPresenter.new(resource: resource).to_h
   end
   ...
 end
@@ -345,13 +365,13 @@ Below table explains the returned fields.
 
 | Gladly customer field    | Spree field                                                                            |
 | ------------------------ | -------------------------------------------------------------------------------------- |
-| name                     | Spree::User.relationships.default_billing_address.full_name                            |
+| name                     | Spree::User.bill_address.full_name                            |
 | externalCustomerId       | Spree::User.email                                                                      |
-| emails                   | Spree::User.attributes.email                                                           |
+| emails                   | Spree::User.email                                                           |
 |                          |
 | customAttributes.spreeId | Spree::User.id                                                                         |
-| phones                   | Spree::User.relationships.default_billing_address.phone                                |
-| address                  | Spree::User.relationships.default_billing_address.(address1, address2, city,  zipcode) |
+| phones                   | Spree::User.bill_address.phone                                |
+| address                  | Spree::User.bill_address (address1, address2, city,  zipcode) |
 
 **For guest customers**
 
@@ -359,11 +379,11 @@ In the below table Spree::Order means the latest (`Spree::Order.completed_at`) o
 
 | Gladly field       | Spree                                                            |
 | ------------------ | ---------------------------------------------------------------- |
-| name               | Spree::Order.billing_address.full_name                           |
+| name               | Spree::Order.bill_address.full_name                           |
 | externalCustomerId | Spree::Order.email                                               |
 | emails             | Spree::Order.email                                               |
-| phones             | Spree:Order.billing_address.phone                                |
-| address            | Spree::Order.billing_address.(address1, address2, city, zipcode) |
+| phones             | Spree:Order.bill_address.phone                                |
+| address            | Spree::Order.bill_address.(address1, address2, city, zipcode) |
 
 #### Detailed search
 
@@ -375,17 +395,17 @@ The below tables list the fields returned from Spree.
 
 | Gladly field                     | Spree field                                                                            |
 | -------------------------------- | -------------------------------------------------------------------------------------- |
-| name                             | Spree::User.relationships.default_billing_address.full_name                            |
+| name                             | Spree::User.bill_address.full_name                            |
 | externalCustomerId               | Spree::User.email                                                                      |
-| emails                           | [ Spree::User.attributes.email ]                                                       |
-| phones                           | [ Spree::User.relationships.default_billing_address.phone ]                            |
-| address                          | Spree::User.relationships.default_billing_address.(address1 , address2, city, zipcode) |
+| emails                           | [ Spree::User.email ]                                                       |
+| phones                           | [ Spree::User.bill_address.phone ]                            |
+| address                          | Spree::User.bill_address.(address1 , address2, city, zipcode) |
 | customAttributes.spreeId         | Spree::User.id                                                                         |
 | customAttributes.totalOrderCount | total of Spree::Order(s) that match the `externalCustomerId`                           |
 | customAttributes.guestOrderCount | customAttributes.totalOrderCount - Spree::Account.attributes.completed_orders          |
-| customAttributes.memberSince     | ?                                                                                      |
-| customAttributes.customerLink    | ?                                                                                      |
-| customAttributes.lifetimeValue   | ?                                                                                      |
+| customAttributes.memberSince     | Spree::User.created_at                                                                                     |
+| customAttributes.customerLink    | customer_profile_url(Spree::User)                                                                                      |
+| customAttributes.lifetimeValue   | sum `total` field of Spree::Order(s) that match the `externalCustomerId`                                                                                    |
 | transactions                     | details of all Spree::Orders that match the `externalCustomerId`                       |
 
 **For guest customers**
@@ -402,7 +422,7 @@ The below tables list the fields returned from Spree.
 | customAttributes.guestOrderCount | customAttributes.totalOrderCount                                 |
 | customAttributes.memberSince     | -                                                                |
 | customAttributes.customerLink    | -                                                                |
-| customAttributes.lifetimeValue   | ?                                                                |
+| customAttributes.lifetimeValue   | sum `total` field of Spree::Order(s) that match the `externalCustomerId`                                                                 |
 | transactions                     | details of all Spree::Orders that match the `externalCustomerId` |
 
 ## Setup sandbox environment
