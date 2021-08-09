@@ -2,6 +2,9 @@
 [comment]: <> (add Travis status build badge when repo became public)
 
 ## Overview
+
+<img align="left" src="./spree.png" width="200">
+
 This exetension allows you to connect your  [Spree](https://github.com/spree/spree) store with [Gladly](https://www.gladly.com/) service. It allows Gladly agents to see basic information about Spree customers and their orders.
 
 It adheres to the specification of a Gladly Lookup adapter as described [here](https://developer.gladly.com/tutorials/lookup).
@@ -13,8 +16,9 @@ Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
   - [Overview](#overview)
   - [Installation](#installation)
   - [Configuration](#configuration)
-    - [Spree Store side:](#spree-store-side)
-    - [Gladly Service side:](#gladly-service-side)
+    - [Spree Store side](#spree-store-side)
+    - [!!! Important !!!](#-important-)
+    - [Gladly Service side](#gladly-service-side)
   - [Customization](#customization)
   - [Usage](#usage)
     - [Basic Lookup](#basic-lookup)
@@ -29,6 +33,8 @@ Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
   - [Testing](#testing)
   - [Contributing](#contributing)
   - [Code of Conduct](#code-of-conduct)
+
+---
 
 ## Installation
 
@@ -49,7 +55,7 @@ Next, you should run the installer:
 
 ## Configuration
 
-### Spree Store side:
+### Spree Store side
 
 After installation, you will find in `config/initializers/spree_gladly.rb` directory the below file:
 
@@ -105,7 +111,7 @@ end
 ***Note: please adjust migration to yours Rails version***
 
 
-### Gladly Service side:
+### Gladly Service side
 
 Provide to your agent:
 - lookup endpoint (  `https://example-spree-store.com/api/v1/customers/lookup` ), where `https://example-spree-store.com` is **your** Spree store URL.
@@ -363,13 +369,13 @@ Below table explains the returned fields.
 
 **For registered customers:**
 
-| Gladly customer field    | Spree field                                                                            |
-| ------------------------ | -------------------------------------------------------------------------------------- |
+| Gladly customer field    | Spree field                                                   |
+| ------------------------ | ------------------------------------------------------------- |
 | name                     | Spree::User.bill_address.full_name                            |
-| externalCustomerId       | Spree::User.email                                                                      |
-| emails                   | Spree::User.email                                                           |
+| externalCustomerId       | Spree::User.email                                             |
+| emails                   | Spree::User.email                                             |
 |                          |
-| customAttributes.spreeId | Spree::User.id                                                                         |
+| customAttributes.spreeId | Spree::User.id                                                |
 | phones                   | Spree::User.bill_address.phone                                |
 | address                  | Spree::User.bill_address (address1, address2, city,  zipcode) |
 
@@ -377,11 +383,11 @@ Below table explains the returned fields.
 
 In the below table Spree::Order means the latest (`Spree::Order.completed_at`) order that matched the email from the search.
 
-| Gladly field       | Spree                                                            |
-| ------------------ | ---------------------------------------------------------------- |
+| Gladly field       | Spree                                                         |
+| ------------------ | ------------------------------------------------------------- |
 | name               | Spree::Order.bill_address.full_name                           |
-| externalCustomerId | Spree::Order.email                                               |
-| emails             | Spree::Order.email                                               |
+| externalCustomerId | Spree::Order.email                                            |
+| emails             | Spree::Order.email                                            |
 | phones             | Spree:Order.bill_address.phone                                |
 | address            | Spree::Order.bill_address.(address1, address2, city, zipcode) |
 
@@ -393,37 +399,37 @@ The below tables list the fields returned from Spree.
 
 **For registered customers:**
 
-| Gladly field                     | Spree field                                                                            |
-| -------------------------------- | -------------------------------------------------------------------------------------- |
-| name                             | Spree::User.bill_address.full_name                            |
-| externalCustomerId               | Spree::User.email                                                                      |
-| emails                           | [ Spree::User.email ]                                                       |
-| phones                           | [ Spree::User.bill_address.phone ]                            |
-| address                          | Spree::User.bill_address.(address1 , address2, city, zipcode) |
-| customAttributes.spreeId         | Spree::User.id                                                                         |
-| customAttributes.totalOrderCount | total of Spree::Order(s) that match the `externalCustomerId`                           |
-| customAttributes.guestOrderCount | customAttributes.totalOrderCount - Spree::Account.attributes.completed_orders          |
-| customAttributes.memberSince     | Spree::User.created_at                                                                                     |
-| customAttributes.customerLink    | customer_profile_url(Spree::User)                                                                                      |
-| customAttributes.lifetimeValue   | sum `total` field of Spree::Order(s) that match the `externalCustomerId`                                                                                    |
-| transactions                     | details of all Spree::Orders that match the `externalCustomerId`                       |
+| Gladly field                     | Spree field                                                                   |
+| -------------------------------- | ----------------------------------------------------------------------------- |
+| name                             | Spree::User.bill_address.full_name                                            |
+| externalCustomerId               | Spree::User.email                                                             |
+| emails                           | [ Spree::User.email ]                                                         |
+| phones                           | [ Spree::User.bill_address.phone ]                                            |
+| address                          | Spree::User.bill_address.(address1 , address2, city, zipcode)                 |
+| customAttributes.spreeId         | Spree::User.id                                                                |
+| customAttributes.totalOrderCount | total of Spree::Order(s) that match the `externalCustomerId`                  |
+| customAttributes.guestOrderCount | customAttributes.totalOrderCount - Spree::Account.attributes.completed_orders |
+| customAttributes.memberSince     | Spree::User.created_at                                                        |
+| customAttributes.customerLink    | customer_profile_url(Spree::User)                                             |
+| customAttributes.lifetimeValue   | sum `total` field of Spree::Order(s) that match the `externalCustomerId`      |
+| transactions                     | details of all Spree::Orders that match the `externalCustomerId`              |
 
 **For guest customers**
 
-| Gladly field                     | Spree field                                                      |
-| -------------------------------- | ---------------------------------------------------------------- |
-| name                             | -                                                                |
-| externalCustomerId               | externalCustomerId (return the same value)                       |
-| emails                           | -                                                                |
-| phones                           | -                                                                |
-| address                          | -                                                                |
-| customAttributes.spreeId         | -                                                                |
-| customAttributes.totalOrderCount | total of Spree::Orders that match the `externalCustomerId`       |
-| customAttributes.guestOrderCount | customAttributes.totalOrderCount                                 |
-| customAttributes.memberSince     | -                                                                |
-| customAttributes.customerLink    | -                                                                |
-| customAttributes.lifetimeValue   | sum `total` field of Spree::Order(s) that match the `externalCustomerId`                                                                 |
-| transactions                     | details of all Spree::Orders that match the `externalCustomerId` |
+| Gladly field                     | Spree field                                                              |
+| -------------------------------- | ------------------------------------------------------------------------ |
+| name                             | -                                                                        |
+| externalCustomerId               | externalCustomerId (return the same value)                               |
+| emails                           | -                                                                        |
+| phones                           | -                                                                        |
+| address                          | -                                                                        |
+| customAttributes.spreeId         | -                                                                        |
+| customAttributes.totalOrderCount | total of Spree::Orders that match the `externalCustomerId`               |
+| customAttributes.guestOrderCount | customAttributes.totalOrderCount                                         |
+| customAttributes.memberSince     | -                                                                        |
+| customAttributes.customerLink    | -                                                                        |
+| customAttributes.lifetimeValue   | sum `total` field of Spree::Order(s) that match the `externalCustomerId` |
+| transactions                     | details of all Spree::Orders that match the `externalCustomerId`         |
 
 ## Setup sandbox environment
 
