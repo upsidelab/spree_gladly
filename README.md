@@ -11,9 +11,10 @@ It adheres to the specification of a Gladly Lookup adapter as described [here](h
 
 Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
 
-**Table of contents:**
+## Table of contents
 - [SpreeGladly](#spreegladly)
   - [Overview](#overview)
+  - [Table of contents](#table-of-contents)
   - [Installation](#installation)
   - [Configuration](#configuration)
     - [Spree Store side](#spree-store-side)
@@ -33,8 +34,6 @@ Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
   - [Testing](#testing)
   - [Contributing](#contributing)
   - [Code of Conduct](#code-of-conduct)
-
----
 
 ## Installation
 
