@@ -3,13 +3,14 @@
 
 ## Overview
 
-<img align="left" src="./spree.png" width="200">
-
 This exetension allows you to connect your  [Spree](https://github.com/spree/spree) store with [Gladly](https://www.gladly.com/) service. It allows Gladly agents to see basic information about Spree customers and their orders.
 
 It adheres to the specification of a Gladly Lookup adapter as described [here](https://developer.gladly.com/tutorials/lookup).
 
 Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
+
+<img src="./spree.png">
+
 
 ## Table of contents
 - [SpreeGladly](#spreegladly)
@@ -20,7 +21,6 @@ Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
     - [Spree Store side](#spree-store-side)
     - [!!! Important !!!](#-important-)
     - [Gladly Service side](#gladly-service-side)
-  - [Customization](#customization)
   - [Usage](#usage)
     - [Basic Lookup](#basic-lookup)
       - [Manual Search Request](#manual-search-request)
@@ -30,6 +30,7 @@ Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
     - [How does the search work? What do the fields mean?](#how-does-the-search-work-what-do-the-fields-mean)
       - [Basic search](#basic-search)
       - [Detailed search](#detailed-search)
+  - [Customization](#customization)
   - [Setup sandbox environment](#setup-sandbox-environment)
   - [Testing](#testing)
   - [Contributing](#contributing)
@@ -112,79 +113,15 @@ end
 
 ### Gladly Service side
 
-Provide to your agent:
+To understand how to set up the integration in Gladly please refer to the Gladly help docs
+
+You will need the following information:
 - lookup endpoint (  `https://example-spree-store.com/api/v1/customers/lookup` ), where `https://example-spree-store.com` is **your** Spree store URL.
-- signing_key 
-
-## Customization
-
-Within `spree_gladly` gem we distinguish response for `guest` and `registerd` customer. For customize those, i.e [detailed lookup response](#detailed-lookup), to do that you have do following steps:
-
-1. replace `Customer::DetailedLookupPresenter` in `config/initializers/spree_gladly.rb` initializer file with your own.
-2. override methods `registerd_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/registered/detailed_presenter.rb) ) or `guest_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/guest/detailed_presenter.rb) ) with your own. 
-
-Please consider below example:
-
-```ruby
-class GladlyCustomersPresenter
-  include Spree::Core::Engine.routes.url_helpers # this is important if you want to use Spree routes
-
-  def initialize(resource:)
-    @resource = resource
-  end
-
-  def to_h
-    return [] unless resource.customer.present?
-
-    resource.guest ? guest_presenter : registered_presenter
-  end
-
-  private
-
-  attr_reader :resource
-
-  def registered_presenter
-    YourOwn::DetailedPresenter.new(resource: resource).to_h
-  end
-
-  def guest_presenter
-    Customer::Guest::DetailedPresenter.new(resource: resource).to_h
-  end
-  ...
-end
-```
-
-`config/initializers/spree_gladly.rb`
-
-```ruby
-SpreeGladly.setup do |config|
-  # ...
-  
-  config.basic_lookup_presenter = Customer::BasicLookupPresenter
-  config.detailed_lookup_presenter = GladlyCustomersPresenter
-
-  # ...
-end
-```
-
-**!!! Important !!!**
-
-If you would like to resign from `to_h` or change `initialize(resource:)` method, you have to override  `Spree::Api::V1::CustomersController#serialize_collection` to do that, please follow by this [guide](https://guides.spreecommerce.org/developer/customization/logic.html#extending-controllers)
-
-`app/controllers/spree/api/v1/customers_controller.rb`
-
-```ruby
-def serialize_collection(type:, collection:)
-  presenter = {
-    detailed: SpreeGladly::Config.detailed_lookup_presenter.new(resource: collection),
-    basic: SpreeGladly::Config.basic_lookup_presenter.new(resource: collection)
-  }[type]
-
-  { results: presenter.to_h }
-end
-```
+- signing_key
 
 ## Usage
+
+To understand how the extension works from user's point of view please refer to the Gladly help docs.
 
 The below description will assume that the reader has familiarized themselves with [Gladly Lookup Adapter tutorial](https://developer.gladly.com/tutorials/lookup).
 
@@ -209,7 +146,7 @@ OOTB the extension allows searching by email, phone number and name of the custo
 ```
 
 #### Automatic Search Request
-The request is automatically populated with data available in customer's profile. OOTB the extension searches for customers based on the name, emails and phone numbers (ignoring the rest of the fields).
+The request is automatically populated with data available in customer's profile. OOTB the extension searches for customers based on the name and emails (ignoring the rest of the fields).
 
 ```json
 {
@@ -228,7 +165,8 @@ The request is automatically populated with data available in customer's profile
 #### Basic Lookup Response
 
 By default the fields listed below are returned. Fields can be hidden via Gladly UI or the integration
-can be extended to return more/different fields. The format of the response has to match the [Gladly Customer schema](https://developer.gladly.com/rest/#operation/createCustomer)
+can be extended to return more/different fields ([Customization](#customization)). The format of the response has to match the [Gladly Customer schema](https://developer.gladly.com/rest/#operation/createCustomer)
+
 Note: we use the email address as the `externalCustomerId` and not the id used by Spree.
 
 ```json
@@ -274,7 +212,7 @@ Detailed lookup is used to update the linked customer with detailed data. This m
 ```
 
 **response payload:**
-The following payload shows all the fields that are returned from Spree. You can ask your Gladly representative to amend which fields are visible in the order card.
+The following payload shows all the fields that are by default returned from Spree. You can ask your Gladly representative to amend which fields are visible in the order card or the integration can be extended to return more/different fields ([Customization](#customization))
 
 ```json
 {
@@ -353,12 +291,12 @@ The following payload shows all the fields that are returned from Spree. You can
 It's worth noting that in Spree customers are able to create orders without being logged in. It is important to be able to link such customers with their Gladly profiles to be able to help them.
 This slightly complicates the search and makes it worth an explanation. Since we want to be able to identify both registered customers and customers with only guest orders, we are using the email address instead of the `Spree::Account.id` as `externalCustomerId` in Gladly (the unique identifier of a customer in an external system).
 
-Note detailes on the exact format of the jsons was shown in previous section. The below tables are for information of the meaning of the fields.
+Note details on the exact format of the jsons was shown in previous section. The below tables are for information of the meaning of the fields in Spree.
 
 #### Basic search
 
 As mentioned in [Basic Lookup](#basic-lookup) searching by name, emails and phone numbers is possible.
-To simplify the search logic and improve performance searching by name and phone number will only search customers with Spree profiles.
+To simplify the search logic and improve performance, searching by name and phone number will only search customers with Spree profiles.
 Searching by email searches both registered customers and guest orders. It happens in two phases (for each customer's email separately):
 
 1. Attempt to find any customers with a Spree profile with the given email. If found, search will return that customer.
@@ -373,7 +311,6 @@ Below table explains the returned fields.
 | name                     | Spree::User.bill_address.full_name                            |
 | externalCustomerId       | Spree::User.email                                             |
 | emails                   | Spree::User.email                                             |
-|                          |
 | customAttributes.spreeId | Spree::User.id                                                |
 | phones                   | Spree::User.bill_address.phone                                |
 | address                  | Spree::User.bill_address (address1, address2, city,  zipcode) |
@@ -382,13 +319,14 @@ Below table explains the returned fields.
 
 In the below table Spree::Order means the latest (`Spree::Order.completed_at`) order that matched the email from the search.
 
-| Gladly field       | Spree                                                         |
-| ------------------ | ------------------------------------------------------------- |
-| name               | Spree::Order.bill_address.full_name                           |
-| externalCustomerId | Spree::Order.email                                            |
-| emails             | Spree::Order.email                                            |
-| phones             | Spree:Order.bill_address.phone                                |
-| address            | Spree::Order.bill_address.(address1, address2, city, zipcode) |
+| Gladly field             | Spree                                                         |
+| ------------------------ | ------------------------------------------------------------- |
+| name                     | Spree::Order.bill_address.full_name                           |
+| externalCustomerId       | Spree::Order.email                                            |
+| emails                   | Spree::Order.email                                            |
+| customAttributes.spreeId | -                                                             |
+| phones                   | Spree:Order.bill_address.phone                                |
+| address                  | Spree::Order.bill_address.(address1, address2, city, zipcode) |
 
 #### Detailed search
 
@@ -402,8 +340,8 @@ The below tables list the fields returned from Spree.
 | -------------------------------- | ----------------------------------------------------------------------------- |
 | name                             | Spree::User.bill_address.full_name                                            |
 | externalCustomerId               | Spree::User.email                                                             |
-| emails                           | [ Spree::User.email ]                                                         |
-| phones                           | [ Spree::User.bill_address.phone ]                                            |
+| emails                           | Spree::User.email                                                             |
+| phones                           | Spree::User.bill_address.phone                                                |
 | address                          | Spree::User.bill_address.(address1 , address2, city, zipcode)                 |
 | customAttributes.spreeId         | Spree::User.id                                                                |
 | customAttributes.totalOrderCount | total of Spree::Order(s) that match the `externalCustomerId`                  |
@@ -418,8 +356,8 @@ The below tables list the fields returned from Spree.
 | Gladly field                     | Spree field                                                              |
 | -------------------------------- | ------------------------------------------------------------------------ |
 | name                             | -                                                                        |
-| externalCustomerId               | externalCustomerId (return the same value)                               |
-| emails                           | -                                                                        |
+| externalCustomerId               | Spree::User.email                                                        |
+| emails                           | Spree::User.email                                                        |
 | phones                           | -                                                                        |
 | address                          | -                                                                        |
 | customAttributes.spreeId         | -                                                                        |
@@ -429,6 +367,74 @@ The below tables list the fields returned from Spree.
 | customAttributes.customerLink    | -                                                                        |
 | customAttributes.lifetimeValue   | sum `total` field of Spree::Order(s) that match the `externalCustomerId` |
 | transactions                     | details of all Spree::Orders that match the `externalCustomerId`         |
+
+## Customization
+
+Within `spree_gladly` gem we distinguish response for `guest` and `registerd` customer. For customize those, i.e [detailed lookup response](#detailed-lookup), to do that you have do following steps:
+
+1. replace `Customer::DetailedLookupPresenter` in `config/initializers/spree_gladly.rb` initializer file with your own.
+2. override methods `registerd_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/registered/detailed_presenter.rb) ) or `guest_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/guest/detailed_presenter.rb) ) with your own. 
+
+Please consider below example:
+
+```ruby
+class GladlyCustomersPresenter
+  include Spree::Core::Engine.routes.url_helpers # this is important if you want to use Spree routes
+
+  def initialize(resource:)
+    @resource = resource
+  end
+
+  def to_h
+    return [] unless resource.customer.present?
+
+    resource.guest ? guest_presenter : registered_presenter
+  end
+
+  private
+
+  attr_reader :resource
+
+  def registered_presenter
+    YourOwn::DetailedPresenter.new(resource: resource).to_h
+  end
+
+  def guest_presenter
+    Customer::Guest::DetailedPresenter.new(resource: resource).to_h
+  end
+  ...
+end
+```
+
+`config/initializers/spree_gladly.rb`
+
+```ruby
+SpreeGladly.setup do |config|
+  # ...
+  
+  config.basic_lookup_presenter = Customer::BasicLookupPresenter
+  config.detailed_lookup_presenter = GladlyCustomersPresenter
+
+  # ...
+end
+```
+
+**!!! Important !!!**
+
+If you would like to resign from `to_h` or change `initialize(resource:)` method, you have to override  `Spree::Api::V1::CustomersController#serialize_collection` to do that, please follow by this [guide](https://guides.spreecommerce.org/developer/customization/logic.html#extending-controllers)
+
+`app/controllers/spree/api/v1/customers_controller.rb`
+
+```ruby
+def serialize_collection(type:, collection:)
+  presenter = {
+    detailed: SpreeGladly::Config.detailed_lookup_presenter.new(resource: collection),
+    basic: SpreeGladly::Config.basic_lookup_presenter.new(resource: collection)
+  }[type]
+
+  { results: presenter.to_h }
+end
+```
 
 ## Setup sandbox environment
 
