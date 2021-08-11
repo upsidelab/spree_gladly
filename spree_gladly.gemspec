@@ -5,11 +5,12 @@ require_relative "lib/spree_gladly/version"
 Gem::Specification.new do |spec|
   spec.name          = "spree_gladly"
   spec.version       = SpreeGladly::VERSION
-  spec.author       = 'Upsidelab.io'
-  spec.email        = 'hello@upsidelab.io'
+  spec.author        = 'Upsidelab.io'
+  spec.email         = 'hello@upsidelab.io'
 
   spec.summary       = 'Spree Connector API'
   spec.homepage      = 'https://upsidelab.io'
+  spec.license       = 'BSD-3-Clause'
 
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
   spec.metadata["homepage_uri"] = spec.homepage
