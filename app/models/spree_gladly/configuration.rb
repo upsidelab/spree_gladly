@@ -8,7 +8,10 @@ module SpreeGladly
                   :order_limit,
                   :order_includes,
                   :order_sorting,
-                  :order_states
+                  :order_states,
+                  :gladly_api_username,
+                  :gladly_api_key,
+                  :gladly_api_base_url
 
     @basic_lookup_presenter = nil
 
@@ -21,5 +24,11 @@ module SpreeGladly
     @order_sorting = nil
 
     @order_states = nil
+
+    @gladly_api_username = nil
+
+    @gladly_api_key = nil
+
+    @gladly_api_base_url = nil
   end
 end
