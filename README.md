@@ -31,6 +31,8 @@ Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
       - [Basic search](#basic-search)
       - [Detailed search](#detailed-search)
   - [Customization](#customization)
+    - [Events](#events)
+      - [Configuration](#configuration)
   - [Setup sandbox environment](#setup-sandbox-environment)
   - [Testing](#testing)
   - [Contributing](#contributing)
@@ -111,7 +113,86 @@ end
 ***Note: please adjust migration to yours Rails version***
 
 
-### Gladly Service side
+### Gladly Service side:
+
+Provide to your agent:
+- lookup endpoint (  `https://example-spree-store.com/api/v1/customers/lookup` ), where `https://example-spree-store.com` is **your** Spree store URL.
+- signing_key 
+
+
+## Events
+
+### Description
+Within gem we introducing [Conversations (Create Item)](https://developer.gladly.com/rest/#operation/createItem) using API client. 
+We implemented two events against `Spree::Order` model:
+ - `Placed` - it's fire up after Order is completed by customer ( `Gladly::Events::Order::Placed`)
+ - `Refundned` - it's fire up after Order items are returned to customer  ( `Gladly::Events::Order::Refunded`)
+ 
+More about [Conversations](https://developer.gladly.com/rest/#tag/Conversations)
+
+### Configuration
+
+```ruby
+config.gladly_api_username = 'api_username@example.com'
+config.gladly_api_key = 'api_key'
+config.gladly_api_base_url = 'https://dev-example.gladly.qa'
+```
+
+## Customization
+
+Within `spree_gladly` gem we distinguish response for `guest` and `registerd` customer. For customize those, i.e [detailed lookup response](#detailed-lookup), to do that you have do following steps:
+
+1. replace `Customer::DetailedLookupPresenter` in `config/initializers/spree_gladly.rb` initializer file with your own.
+2. override methods `registerd_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/registered/detailed_presenter.rb) ) or `guest_presenter` ( [default presenter](https://github.com/upsidelab/spree_gladly/blob/master/app/presenters/customer/guest/detailed_presenter.rb) ) with your own. 
+
+Please consider below example:
+
+```ruby
+class GladlyCustomersPresenter
+  include Spree::Core::Engine.routes.url_helpers # this is important if you want to use Spree routes
+
+  def initialize(resource:)
+    @resource = resource
+  end
+
+  def to_h
+    return [] unless resource.customer.present?
+
+    resource.guest ? guest_presenter : registered_presenter
+  end
+
+  private
+
+  attr_reader :resource
+
+  def registered_presenter
+    YourOwn::DetailedPresenter.new(resource: resource).to_h
+  end
+
+  def guest_presenter
+    Customer::Guest::DetailedPresenter.new(resource: resource).to_h
+  end
+  ...
+end
+```
+
+`config/initializers/spree_gladly.rb`
+
+```ruby
+SpreeGladly.setup do |config|
+  # ...
+  
+  config.basic_lookup_presenter = Customer::BasicLookupPresenter
+  config.detailed_lookup_presenter = GladlyCustomersPresenter
+
+  # ...
+end
+```
+
+**!!! Important !!!**
+
+If you would like to resign from `to_h` or change `initialize(resource:)` method, you have to override  `Spree::Api::V1::CustomersController#serialize_collection` to do that, please follow by this [guide](https://guides.spreecommerce.org/developer/customization/logic.html#extending-controllers)
+
 
 To understand how to set up the integration in Gladly please refer to the Gladly help docs
 
