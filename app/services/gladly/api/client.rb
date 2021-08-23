@@ -28,6 +28,7 @@ module Gladly
         uri = URI(request_url)
 
         http = Net::HTTP.new(uri.host, uri.port)
+        http.open_timeout = 20
         http.use_ssl = true
 
         request = Net::HTTP::Post.new(uri.path)

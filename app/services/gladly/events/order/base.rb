@@ -11,9 +11,11 @@ module Gladly
           @refund = refund
         end
 
+        # rubocop:disable Layout/LineLength
         def call
-          Gladly::Api::Conversations::Create.new(payload: payload).call
+          Gladly::Api::Conversations::Create.new(payload: payload).call unless SpreeGladly::Config.turn_off_built_in_events
         end
+        # rubocop:enable Layout/LineLength
 
         private
 
