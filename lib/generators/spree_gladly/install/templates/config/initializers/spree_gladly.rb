@@ -15,4 +15,9 @@ SpreeGladly.setup do |config|
   # Setting this value to `0` disables the threshold validation.
   # Default is `0`.
   # config.signing_threshold = 5.minutes
+
+  # API CONFIG
+  config.gladly_api_username = ''
+  config.gladly_api_key = ''
+  config.gladly_api_base_url = ''
 end
