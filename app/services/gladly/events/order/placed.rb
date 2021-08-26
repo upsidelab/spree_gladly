@@ -13,7 +13,7 @@ module Gladly
             },
             content: {
               type: 'CUSTOMER_ACTIVITY',
-              title: "Order #{order.number}",
+              title: "Order Placed #{order.number}",
               body: body_content,
               activityType: 'EMAIL',
               sourceName: 'Spree',
@@ -28,7 +28,7 @@ module Gladly
         def body_content
           [
             "Order Total: #{Spree::Money.new(order.total).to_html}",
-            "Item Total: #{Spree::Money.new(order.line_items.map(&:total).sum).to_html}",
+            "Items Total: #{Spree::Money.new(order.line_items.map(&:total).sum).to_html}",
             "Adjustment Total: #{Spree::Money.new(order.adjustment_total).to_html}"
           ].join('<br>')
         end
