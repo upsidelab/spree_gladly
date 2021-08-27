@@ -3,9 +3,9 @@
 
 ## Overview
 
-This exetension allows you to connect your  [Spree](https://github.com/spree/spree) store with [Gladly](https://www.gladly.com/) service. It allows Gladly agents to see basic information about Spree customers and their orders.
+This extension allows you to connect your [Spree](https://github.com/spree/spree) store with [Gladly](https://www.gladly.com/) customer service platform. It allows Gladly agents to see information about Spree customers, their orders and events associated with them.
 
-It adheres to the specification of a Gladly Lookup adapter as described [here](https://developer.gladly.com/tutorials/lookup).
+You can read more about the connector in [Gladly help docs](https://help.gladly.com/docs/spree-overview).
 
 Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
 
@@ -18,10 +18,11 @@ Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
   - [Table of contents](#table-of-contents)
   - [Installation](#installation)
   - [Configuration](#configuration)
-    - [Spree Store side](#spree-store-side)
+    - [Spree Store](#spree-store)
     - [!!! Important !!!](#-important-)
-    - [Gladly Service side](#gladly-service-side)
-  - [Usage](#usage)
+    - [Gladly App](#gladly-app)
+  - [Customization](#customization)
+  - [Extension Usage](#extension-usage)
     - [Basic Lookup](#basic-lookup)
       - [Manual Search Request](#manual-search-request)
       - [Automatic Search Request](#automatic-search-request)
@@ -30,9 +31,10 @@ Supported Spree versions: `3.0`, `3.1`, `3.7`, `4.0`, `4.1`, `4.2`
     - [How does the search work? What do the fields mean?](#how-does-the-search-work-what-do-the-fields-mean)
       - [Basic search](#basic-search)
       - [Detailed search](#detailed-search)
-  - [Customization](#customization)
     - [Events](#events)
-      - [Configuration](#configuration)
+      - [Description](#description)
+      - [Configuration](#configuration-1)
+  - [Customization](#customization-1)
   - [Setup sandbox environment](#setup-sandbox-environment)
   - [Testing](#testing)
   - [Contributing](#contributing)
@@ -57,7 +59,7 @@ Next, you should run the installer:
 
 ## Configuration
 
-### Spree Store side
+### Spree Store
 
 After installation, you will find in `config/initializers/spree_gladly.rb` directory the below file:
 
@@ -112,39 +114,14 @@ end
 ```
 ***Note: please adjust migration to yours Rails version***
 
+### Gladly App
 
-### Gladly Service side:
+You can find out how to configure the connector in the Gladly app in help docs - [Set Up Spree Integration](https://help.gladly.com/docs/set-up-spree-integration)
 
-Provide to your agent:
+You will need:
 - lookup endpoint (  `https://example-spree-store.com/api/v1/customers/lookup` ), where `https://example-spree-store.com` is **your** Spree store URL.
-- signing_key 
-
-
-## Events
-
-### Description
-Within gem we introduce [Conversations (Create Item)](https://developer.gladly.com/rest/#operation/createItem) using API client. 
-We implemented two events against `Spree::Order` model:
- - `Placed` - it's fired up after Order is completed by customer ( `Gladly::Events::Order::Placed`)
- - `Refundned` - it's fired up after Order items are returned to customer  ( `Gladly::Events::Order::Refunded`)
- 
-More about [Conversations](https://developer.gladly.com/rest/#tag/Conversations)
-
-### Configuration
-
-**Important !!!** 
-
-**Without bellow settings events will won't work. You will get those from yours Gladly dashboard**
-
-```ruby
-config.gladly_api_username = 'api_username@example.com'
-config.gladly_api_key = 'api_key'
-config.gladly_api_base_url = 'https://dev-example.gladly.qa'
-config.turn_off_built_in_events = false
-```
-
-In case when you need write your own events class you can switch off built-in events by setting `turn_off_built_in_events` as `true`
-
+- signing_key
+- Gladly API user and password
 
 ## Customization
 
@@ -201,18 +178,11 @@ end
 
 If you would like to resign from `to_h` or change `initialize(resource:)` method, you have to override  `Spree::Api::V1::CustomersController#serialize_collection` to do that, please follow by this [guide](https://guides.spreecommerce.org/developer/customization/logic.html#extending-controllers)
 
+## Extension Usage
 
-To understand how to set up the integration in Gladly please refer to the Gladly help docs
+To understand how the extension works from user's point of view please refer to the [Gladly help docs](https://help.gladly.com/docs/spree-overview).
 
-You will need the following information:
-- lookup endpoint (  `https://example-spree-store.com/api/v1/customers/lookup` ), where `https://example-spree-store.com` is **your** Spree store URL.
-- signing_key
-
-## Usage
-
-To understand how the extension works from user's point of view please refer to the Gladly help docs.
-
-The below description will assume that the reader has familiarized themselves with [Gladly Lookup Adapter tutorial](https://developer.gladly.com/tutorials/lookup).
+The implementation adheres to the specification of a Gladly Lookup adapter as described [here](https://developer.gladly.com/tutorials/lookup). The below description will assume that the reader has familiarized themselves with the tutorial.
 
 ### Basic Lookup
 
@@ -456,6 +426,31 @@ The below tables list the fields returned from Spree.
 | customAttributes.customerLink    | -                                                                        |
 | customAttributes.lifetimeValue   | sum `total` field of Spree::Order(s) that match the `externalCustomerId` |
 | transactions                     | details of all Spree::Orders that match the `externalCustomerId`         |
+
+### Events
+
+#### Description
+Within gem we introduce [Conversations (Create Item)](https://developer.gladly.com/rest/#operation/createItem) using API client. 
+We implemented two events against `Spree::Order` model:
+ - `Placed` - it's fired up after Order is completed by customer ( `Gladly::Events::Order::Placed`)
+ - `Refundned` - it's fired up after Order items are returned to customer  ( `Gladly::Events::Order::Refunded`)
+ 
+More about [Conversations](https://developer.gladly.com/rest/#tag/Conversations)
+
+#### Configuration
+
+**Important !!!**
+
+**Without bellow settings events will won't work. You will get those from yours Gladly dashboard**
+
+```ruby
+config.gladly_api_username = 'api_username@example.com'
+config.gladly_api_key = 'api_key'
+config.gladly_api_base_url = 'https://dev-example.gladly.qa'
+config.turn_off_built_in_events = false
+```
+
+In case when you need write your own events class you can switch off built-in events by setting `turn_off_built_in_events` as `true`
 
 ## Customization
 
