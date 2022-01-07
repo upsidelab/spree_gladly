@@ -1,0 +1,20 @@
+{
+  "name": "spree-gladly-docs",
+  "version": "1.0.0",
+  "description": "Spree Gladly Docs",
+  "main": "index.js",
+  "authors": {
+    "name": "Rafal Cymerys",
+    "email": "rafal@upsidelab.io"
+  },
+  "repository": "/spree-gladly-docs",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.5.3"
+  },
+  "dependencies": {}
+}
