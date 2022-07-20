@@ -24,7 +24,7 @@ Detailed lookup is used to update the linked customer with detailed data. This m
 ```
 
 **response payload:**
-The following payload shows all the fields that are by default returned from Spree. You can ask your Gladly representative to amend which fields are visible in the order card or the integration can be extended to return more/different fields ([Customization](/customization))
+The following payload shows all the fields that are by default returned from Spree. You can ask your Gladly representative to amend which fields are visible in the order card or the integration can be extended to return more/different fields ([Customization](/spree-gladly/customization))
 
 ```json
 {

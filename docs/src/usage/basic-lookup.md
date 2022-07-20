@@ -38,7 +38,7 @@ The request is automatically populated with data available in customer's profile
 ## Basic Lookup Response
 
 By default the fields listed below are returned. Fields can be hidden via Gladly UI or the integration
-can be extended to return more/different fields ([Customization](/customization)). The format of the response has to match the [Gladly Customer schema](https://developer.gladly.com/rest/#operation/createCustomer)
+can be extended to return more/different fields ([Customization](/spree-gladly/customization)). The format of the response has to match the [Gladly Customer schema](https://developer.gladly.com/rest/#operation/createCustomer)
 
 Note: we use the email address as the `externalCustomerId` and not the id used by Spree.
 
