@@ -72,6 +72,7 @@ module.exports = {
             '/usage/basic-lookup',
             '/usage/detailed-lookup',
             '/usage/search',
+            '/usage/events',
           ]
         },
         {
