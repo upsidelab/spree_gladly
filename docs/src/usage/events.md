@@ -1,4 +1,5 @@
-#### Description
+# Events
+
 Within gem we introduce [Conversations (Create Item)](https://developer.gladly.com/rest/#operation/createItem) using API client. 
 We implemented two events against `Spree::Order` model:
  - `Placed` - it's fired up after Order is completed by customer ( `Gladly::Events::Order::Placed`)
