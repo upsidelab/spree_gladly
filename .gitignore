@@ -16,3 +16,4 @@ Gemfile.lock
 .rspec_status
 .byebug_history
 /vendor
+.DS_Store
