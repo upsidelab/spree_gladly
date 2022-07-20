@@ -81,6 +81,13 @@ module.exports = {
           children: [
             '/customization'
           ]
+        },
+        {
+          title: 'Sandbox Environment',
+          collapsable: false,
+          children: [
+            '/sandbox-environment'
+          ]
         }
       ],
     }
