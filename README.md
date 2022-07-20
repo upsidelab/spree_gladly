@@ -124,14 +124,14 @@ We're glad for your interest in Spree Gladly and taking the time to contribute ð
 
 Read our [Contributing Guide](./.github/CONTRIBUTING.md) to learn about our development process, how to propose bugfixes and improvements, and how to build and test your changes to the project.
 
-### [Code of Conduct]('./.github/CODE_OF_CONDUCT.md')
+### [Code of Conduct](./.github/CODE_OF_CONDUCT.md)
 
-Everyone interacting in the SpreeGladly project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [Code of Conduct]('./.github/CODE_OF_CONDUCT.md').
+Everyone interacting in the SpreeGladly project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [Code of Conduct](./.github/CODE_OF_CONDUCT.md).
 
 <!-- [REFERENCE PROJECT LICENSE] -->
 ## License
 
-Spree Gladly is [BSD 3-Clause "New" or "Revised" licensed](/).
+Spree Gladly is [BSD 3-Clause "New" or "Revised" licensed](/LICENSE).
  
 ---
 
