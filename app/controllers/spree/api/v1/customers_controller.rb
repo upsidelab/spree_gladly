@@ -25,19 +25,18 @@ module Spree
         private
 
         def serialize_collection(type:, collection:)
-          presenter = {
-            detailed: SpreeGladly::Config.detailed_lookup_presenter.new(resource: collection),
-            basic: SpreeGladly::Config.basic_lookup_presenter.new(resource: collection)
-          }[type]
+          klass     = type == :basic ? :basic_lookup_presenter : :detailed_lookup_presenter
+          presenter = SpreeGladly::Config.send(klass).send :new, resource: collection
 
           { results: presenter.to_h }
         end
 
         def customer_lookup(type:)
-          {
-            detailed: Customer::DetailedLookup.new(params: params),
-            basic: Customer::BasicLookup.new(params: params)
-          }[type]
+          if type == :basic
+            Customer::BasicLookup.new(params: params)
+          else
+            Customer::DetailedLookup.new(params: params)
+          end
         end
 
         def validate_signature
